@@ -1,0 +1,11 @@
+apiVersion: v2
+name: tgmedia-api
+description: Telegram Media API chart
+icon: https://
+type: application
+version: 0.1.2
+appVersion: '1.0.0'
+dependencies:
+  - name: base
+    version: 1.0.0
+    repository: file://../base

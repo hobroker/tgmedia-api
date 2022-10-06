@@ -1,0 +1,17 @@
+base:
+  image:
+    repository: ghcr.io/hobroker/tgmedia-api
+    tag: 4.6.0
+    pullPolicy: IfNotPresent
+  service:
+    type: LoadBalancer
+    targetPort: 3000
+    port: 80
+  volumes:
+    - name: api-config
+      configMap:
+        name: tgmedia-api-config
+  volumeMounts:
+    - name: api-config
+      subPath: .env
+      mountPath: '/usr/src/app/.env'

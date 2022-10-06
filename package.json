@@ -1,0 +1,98 @@
+{
+  "name": "tgmedia-api",
+  "version": "4.6.0",
+  "private": true,
+  "description": "Tgmedia API",
+  "license": "MIT",
+  "author": "Igor Leahu <igor.leahu24@gmail.com>",
+  "scripts": {
+    "prebuild": "rimraf dist",
+    "build": "nest build",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "start": "nest start",
+    "dev": "nest start --watch",
+    "start:debug": "nest start --debug --watch",
+    "start:prod": "node dist/main.js",
+    "lint": "eslint \"src/**/*.ts\" --max-warnings 0 --fix",
+    "test": "jest --passWithNoTests",
+    "test:watch": "jest --watch",
+    "prepare": "husky install",
+    "cli:dev": "ts-node -r tsconfig-paths/register src/cli/index.ts",
+    "cli": "node dist/cli/index.js"
+  },
+  "jest": {
+    "collectCoverageFrom": [
+      "**/*.(t|j)s"
+    ],
+    "coverageDirectory": "../coverage",
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts"
+    ],
+    "rootDir": "src",
+    "testEnvironment": "node",
+    "testRegex": ".*\\.spec\\.ts$",
+    "transform": {
+      "^.+\\.(t|j)s$": "ts-jest"
+    }
+  },
+  "dependencies": {
+    "@nestjs/apollo": "^10.0.8",
+    "@nestjs/common": "8.4.4",
+    "@nestjs/config": "^2.0.0",
+    "@nestjs/core": "8.4.4",
+    "@nestjs/graphql": "^10.0.8",
+    "@nestjs/jwt": "^8.0.0",
+    "@nestjs/passport": "^8.2.1",
+    "@nestjs/platform-express": "8.4.4",
+    "@nestjs/terminus": "^8.0.6",
+    "@prisma/client": "^3.12.0",
+    "axios": "^0.21.1",
+    "axios-cache-adapter": "^2.7.3",
+    "axios-retry": "^3.2.4",
+    "commander": "^9.1.0",
+    "nest-commander": "^2.4.0",
+    "ramda": "^0.28.0",
+    "reflect-metadata": "0.1.13",
+    "typescript-memoize": "^1.1.0"
+  },
+  "devDependencies": {
+    "@eclass/semantic-release-docker": "^3.0.0",
+    "@nestjs/cli": "8.2.5",
+    "@nestjs/schematics": "8.0.10",
+    "@nestjs/testing": "8.4.4",
+    "@semantic-release/changelog": "^6.0.1",
+    "@semantic-release/exec": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "@types/express": "4.17.13",
+    "@types/jest": "27.4.1",
+    "@types/luxon": "^2.3.2",
+    "@types/node": "17.0.23",
+    "@types/ramda": "^0.28.8",
+    "@typescript-eslint/eslint-plugin": "5.18.0",
+    "@typescript-eslint/parser": "^5.18.0",
+    "conventional-changelog-conventionalcommits": "^4.6.3",
+    "eslint": "8.13.0",
+    "eslint-config-prettier": "8.5.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-prettier": "4.0.0",
+    "husky": "^7.0.4",
+    "jest": "27.5.1",
+    "lint-staged": "^12.3.7",
+    "prettier": "2.6.2",
+    "rimraf": "^3.0.2",
+    "semantic-release": "^19.0.2",
+    "ts-jest": "27.1.4",
+    "ts-loader": "9.2.8",
+    "ts-node": "10.7.0",
+    "tsconfig-paths": "3.14.1",
+    "typescript": "4.6.3"
+  },
+  "lint-staged": {
+    "src/**/*.ts": [
+      "eslint --max-warnings 0 --fix",
+      "prettier --write"
+    ]
+  }
+}
