@@ -1,10 +1,17 @@
 import { spawn } from 'child_process';
 import * as path from 'path';
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
+import { ConfigType } from '@nestjs/config';
+import { handbrakeConfig } from '../handbrake.config';
 
 @Injectable()
 export class HandbrakeService {
   private readonly logger = new Logger(this.constructor.name);
+
+  constructor(
+    @Inject(handbrakeConfig.KEY)
+    private config: ConfigType<typeof handbrakeConfig>,
+  ) {}
 
   async convert(input: string, callback?: (progress: string) => void) {
     const output = path.format({
@@ -21,7 +28,7 @@ export class HandbrakeService {
         '-o',
         output,
         '--preset',
-        'Fast 1080p30',
+        this.config.preset,
       ]);
 
       child.stdout.setEncoding('utf8');
