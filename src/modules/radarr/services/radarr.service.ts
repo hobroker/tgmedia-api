@@ -1,13 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { HttpService } from '../../http';
-import { TelegramService } from '../../telegram/services';
 
 @Injectable()
 export class RadarrService {
-  constructor(
-    private readonly httpService: HttpService,
-    private readonly telegramService: TelegramService,
-  ) {}
+  constructor(private readonly httpService: HttpService) {}
 
   async list() {
     const { data } = await this.httpService.get('movie');
@@ -17,25 +13,10 @@ export class RadarrService {
 
   async get(movieId: number) {
     const { data } = await this.httpService.get(`movie/${movieId}`);
-
-    return data;
-  }
-
-  async sendToTelegram(movie) {
-    const caption = [
-      `<b>${movie.title}</b>`,
-      `${movie.overview}`,
-      `🎬<a href="https://youtube.com/watch?v=${movie.youTubeTrailerId}">Trailer</a>`,
-      [movie.genres.map((tag) => `#${tag}`).join(' '), '#Movie'].join('\n'),
-    ].join('\n\n');
-    const image = movie.images.find(
-      ({ coverType }) => coverType === 'poster',
-    ).remoteUrl;
-
-    await this.telegramService.sendPhoto({
-      caption,
-      image,
-      match: movie.title,
+    const { data: credits } = await this.httpService.get('credit', {
+      params: { movieId },
     });
+
+    return { ...data, credits: credits.splice(0, 2) };
   }
 }
