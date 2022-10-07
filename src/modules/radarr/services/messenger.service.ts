@@ -4,6 +4,8 @@ import { TelegramService } from '../../telegram';
 import { HandbrakeService } from '../../handbrake';
 import { noop } from '../../../util/noop';
 
+const toTag = compose(concat('#'), replace(/\s/g, ''));
+
 @Injectable()
 export class MessengerService {
   constructor(
@@ -16,7 +18,10 @@ export class MessengerService {
     const discussionMessage =
       await this.telegramService.waitForDiscussionMessage(message.message_id);
 
-    const video = await this.convertVideo(discussionMessage.message_id);
+    const video = await this.convertVideo(
+      discussionMessage.message_id,
+      movie.movieFile.path,
+    );
 
     await this.telegramService.sendVideoToDiscussion(
       discussionMessage.message_id,
@@ -32,11 +37,8 @@ export class MessengerService {
       `<b>${movie.title}</b>`,
       movie.overview,
       `🎬<a href="https://youtube.com/watch?v=${movie.youTubeTrailerId}">Trailer</a>`,
-      [movie.genres.map(concat('#')).join(' '), '#Movie'].join('\n'),
-      `👥` +
-        movie.credits
-          .map(compose(concat('#'), replace(/\s/g, ''), prop('personName')))
-          .join(' '),
+      [movie.genres.map(toTag).join(' '), toTag('Movie')].join('\n'),
+      `👥` + movie.credits.map(compose(toTag, prop('personName'))).join(' '),
     ].join('\n\n');
     const image = movie.images.find(propEq('coverType', 'poster')).remoteUrl;
 
@@ -48,7 +50,7 @@ export class MessengerService {
 
   private async convertVideo(
     discussionMessageId: number,
-    movieFilePath?: string,
+    movieFilePath: string,
   ) {
     const updateMessage = await this.telegramService.sendMessageToDiscussion(
       'hell',
@@ -62,7 +64,7 @@ export class MessengerService {
     };
 
     const video = await this.handbrakeService.convert(
-      movieFilePath || '/Users/ileahu/Documents/hb/original.mp4',
+      movieFilePath,
       onProgress,
     );
 
