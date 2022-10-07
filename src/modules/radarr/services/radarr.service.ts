@@ -35,6 +35,7 @@ export class RadarrService {
     await this.telegramService.sendPhoto({
       caption,
       image,
+      match: movie.title,
     });
   }
 }
