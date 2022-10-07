@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { compose, concat, prop, propEq, replace } from 'ramda';
-import { TelegramService } from '../../telegram/services';
-import { HandbrakeService } from '../../handbrake/services';
+import { TelegramService } from '../../telegram';
+import { HandbrakeService } from '../../handbrake';
 import { noop } from '../../../util/noop';
 
 @Injectable()
