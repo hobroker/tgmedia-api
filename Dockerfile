@@ -1,9 +1,11 @@
-FROM node:16 AS BUILD_IMAGE
+FROM node:18 AS BUILD_IMAGE
 
 ENV NODE_ENV "production"
 ARG PORT
 
 WORKDIR /usr/src/app
+
+RUN apt-get update && apt-get install -y handbrake-cli
 
 COPY package*.json ./
 
