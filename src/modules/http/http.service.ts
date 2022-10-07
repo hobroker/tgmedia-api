@@ -13,11 +13,17 @@ export class HttpService {
     return this.instance.request(config);
   }
 
-  get<T = any>(
+  async get<T = any>(
     url: string,
     config?: AxiosRequestConfig,
   ): Promise<AxiosResponse<T>> {
-    return this.instance.get(url, config);
+    try {
+      const result = await this.instance.get(url, config);
+
+      return result;
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   delete<T = any>(
