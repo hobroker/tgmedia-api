@@ -17,7 +17,9 @@ export class MessengerService {
   ) {}
 
   async sendToTelegram(rawMovie: IMovie) {
-    const movie = new Movie(rawMovie);
+    const movie = new Movie(rawMovie, {
+      overrideMediaPath: this.config.overrideMediaPath,
+    });
 
     const message = await this.sendMainMessage(movie);
     const discussionMessage =
@@ -25,7 +27,7 @@ export class MessengerService {
 
     const video = await this.convertVideo(
       discussionMessage.message_id,
-      this.config.overrideMediaPath || movie.file,
+      movie.file,
     );
 
     await this.telegramService.sendVideoToDiscussion(

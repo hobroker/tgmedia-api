@@ -5,10 +5,15 @@ import { IMovie } from '../../radarr';
 const toTag = compose(concat('#'), replace(/\s/g, ''));
 
 export class Movie {
-  private movie: IMovie;
+  private readonly movie: IMovie;
+  private readonly overrideMediaPath: string;
 
-  constructor(movie: IMovie) {
+  constructor(
+    movie: IMovie,
+    { overrideMediaPath }: { overrideMediaPath?: string },
+  ) {
     this.movie = movie;
+    this.overrideMediaPath = overrideMediaPath;
   }
 
   get title() {
@@ -32,6 +37,6 @@ export class Movie {
   }
 
   get file() {
-    return this.movie.movieFile.path;
+    return this.overrideMediaPath || this.movie.movieFile.path;
   }
 }
