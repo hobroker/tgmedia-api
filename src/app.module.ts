@@ -11,7 +11,6 @@ import { MessengerModule } from './modules/messenger';
     }),
     ConfigModule.forFeature(appConfig),
     HealthModule,
-    HealthModule,
     MessengerModule,
   ],
 })
