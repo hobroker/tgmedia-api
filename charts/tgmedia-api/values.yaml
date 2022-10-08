@@ -1,7 +1,7 @@
 base:
   image:
     repository: ghcr.io/hobroker/tgmedia-api
-    tag: 1.0.0
+    tag: 1.0.1
     pullPolicy: IfNotPresent
   service:
     type: LoadBalancer
