@@ -5,7 +5,7 @@ import { ConfigType } from '@nestjs/config';
 import { telegramConfig } from '../telegram.config';
 
 @Injectable()
-export class TelegramService {
+export class TelegramBotService {
   private bot: TelegramBot;
   private readonly logger = new Logger(this.constructor.name);
 

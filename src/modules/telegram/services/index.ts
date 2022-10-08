@@ -1,1 +1,1 @@
-export { TelegramService } from './telegram.service';
+export { TelegramBotService } from './telegram-bot.service';

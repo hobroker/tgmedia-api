@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
-import { TelegramService } from '../../telegram';
+import { TelegramBotService } from '../../telegram';
 import { HandbrakeService } from '../../handbrake';
 import { noop } from '../../../util/noop';
 import { messengerConfig } from '../messenger.config';
@@ -13,7 +13,7 @@ export class MessengerService {
   constructor(
     @Inject(messengerConfig.KEY)
     private config: ConfigType<typeof messengerConfig>,
-    private readonly telegramService: TelegramService,
+    private readonly telegramBotService: TelegramBotService,
     private readonly handbrakeService: HandbrakeService,
   ) {}
 
@@ -24,14 +24,16 @@ export class MessengerService {
 
     const message = await this.sendMainMessage(movie);
     const discussionMessage =
-      await this.telegramService.waitForDiscussionMessage(message.message_id);
+      await this.telegramBotService.waitForDiscussionMessage(
+        message.message_id,
+      );
 
     const video = await this.convertVideo(
       discussionMessage.message_id,
       movie.file,
     );
 
-    await this.telegramService.sendVideoToDiscussion(
+    await this.telegramBotService.sendVideoToDiscussion(
       discussionMessage.message_id,
       {
         caption: movie.title,
@@ -41,7 +43,7 @@ export class MessengerService {
   }
 
   private async sendMainMessage(movie: Movie) {
-    return this.telegramService.sendPhoto({
+    return this.telegramBotService.sendPhoto({
       caption: movie.caption,
       image: movie.image,
     });
@@ -51,13 +53,13 @@ export class MessengerService {
     discussionMessageId: number,
     movieFilePath: string,
   ) {
-    const updateMessage = await this.telegramService.sendMessageToDiscussion(
+    const updateMessage = await this.telegramBotService.sendMessageToDiscussion(
       'starting to encode the video...',
       discussionMessageId,
     );
 
     const onProgress = throttle(async (progress) => {
-      await this.telegramService
+      await this.telegramBotService
         .updateDiscussionMessage(progress, updateMessage.message_id)
         .catch(noop);
     }, 1000);
@@ -67,7 +69,7 @@ export class MessengerService {
       onProgress,
     );
 
-    await this.telegramService.deleteDiscussionMessage(
+    await this.telegramBotService.deleteDiscussionMessage(
       updateMessage.message_id,
     );
 
