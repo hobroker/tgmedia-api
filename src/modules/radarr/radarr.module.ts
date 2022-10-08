@@ -1,15 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { HttpModule } from '../http';
-import { TelegramModule } from '../telegram';
-import { HandbrakeModule } from '../handbrake';
 import { radarrConfig } from './radarr.config';
+import { RadarrService, RadarrHttpConfigService } from './services';
 import { RadarrController } from './controllers';
-import {
-  RadarrService,
-  RadarrHttpConfigService,
-  MessengerService,
-} from './services';
 
 @Module({
   imports: [
@@ -18,10 +12,9 @@ import {
       useClass: RadarrHttpConfigService,
       imports: [ConfigModule.forFeature(radarrConfig)],
     }),
-    TelegramModule,
-    HandbrakeModule,
   ],
-  providers: [RadarrService, MessengerService],
+  providers: [RadarrService],
   controllers: [RadarrController],
+  exports: [RadarrService],
 })
 export class RadarrModule {}

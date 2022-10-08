@@ -6,7 +6,7 @@ import { WithDuration } from '../util';
   name: 'test',
   description: 'Test',
 })
-export class TestCommand implements CommandRunner {
+export class TestCommand extends CommandRunner {
   private readonly logger = new Logger(this.constructor.name);
 
   @WithDuration()
