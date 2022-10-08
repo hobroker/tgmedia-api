@@ -17,7 +17,7 @@ export class HandbrakeService {
     const output = path.format({
       ...path.parse(input),
       base: '',
-      dir: '/tmp',
+      dir: this.config.tmpFolder,
       ext: '.mp4',
     });
 
