@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/hobroker/tgmedia-api/compare/v1.0.1...v1.1.0) (2022-10-08)
+
+
+### Features
+
+* throttle updates and allow more handbrake env config ([#3](https://github.com/hobroker/tgmedia-api/issues/3)) ([0b9083d](https://github.com/hobroker/tgmedia-api/commit/0b9083d095f42f9de2b9bb1bdfa492477521a379))
+
 ## [1.0.1](https://github.com/hobroker/tgmedia-api/compare/v1.0.0...v1.0.1) (2022-10-07)
 
 
