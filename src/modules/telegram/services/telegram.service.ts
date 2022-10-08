@@ -1,3 +1,4 @@
+import { readFileSync } from 'fs';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import * as TelegramBot from 'node-telegram-bot-api';
 import { ConfigType } from '@nestjs/config';
@@ -42,21 +43,37 @@ export class TelegramService {
   }
 
   async sendPhoto({ caption, image }: { caption: string; image: string }) {
-    return this.bot.sendPhoto(this.config.chatId, image, {
-      caption,
-      parse_mode: 'HTML',
-    });
+    return this.bot.sendPhoto(
+      this.config.chatId,
+      image,
+      {
+        caption,
+        parse_mode: 'HTML',
+      },
+      {
+        contentType: 'application/octet-stream',
+      },
+    );
   }
 
   async sendVideoToDiscussion(
     discussionMessageId: number,
     { caption, video }: { caption: string; video: string },
   ) {
-    return this.bot.sendVideo(this.config.replyChatId, video, {
-      caption,
-      parse_mode: 'HTML',
-      reply_to_message_id: discussionMessageId,
-    });
+    const buffer = readFileSync(video);
+
+    return this.bot.sendVideo(
+      this.config.replyChatId,
+      buffer,
+      {
+        caption,
+        parse_mode: 'HTML',
+        reply_to_message_id: discussionMessageId,
+      },
+      {
+        contentType: 'application/octet-stream',
+      },
+    );
   }
 
   async waitForDiscussionMessage(messageId: number) {

@@ -6,6 +6,7 @@ import { noop } from '../../../util/noop';
 import { messengerConfig } from '../messenger.config';
 import { IMovie } from '../../radarr';
 import { Movie } from '../entities';
+import { throttle } from '../../../util/throttle';
 
 @Injectable()
 export class MessengerService {
@@ -50,20 +51,16 @@ export class MessengerService {
     discussionMessageId: number,
     movieFilePath: string,
   ) {
-    if (movieFilePath.endsWith('.mp4')) {
-      return movieFilePath;
-    }
-
     const updateMessage = await this.telegramService.sendMessageToDiscussion(
       'starting to encode the video...',
       discussionMessageId,
     );
 
-    const onProgress = async (progress) => {
-      return this.telegramService
+    const onProgress = throttle(async (progress) => {
+      await this.telegramService
         .updateDiscussionMessage(progress, updateMessage.message_id)
         .catch(noop);
-    };
+    }, 1000);
 
     const video = await this.handbrakeService.convert(
       movieFilePath,
