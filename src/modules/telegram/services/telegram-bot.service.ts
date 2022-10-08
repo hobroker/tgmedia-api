@@ -13,7 +13,7 @@ export class TelegramBotService {
     @Inject(telegramConfig.KEY)
     private config: ConfigType<typeof telegramConfig>,
   ) {
-    this.bot = new TelegramBot(config.token, {
+    this.bot = new TelegramBot(config.botToken, {
       polling: true,
     });
   }
