@@ -39,5 +39,9 @@ lerna-debug.log*
 # helm
 **/charts/*.tgz
 
+
 # app
 .telegram
+
+.tmp/*
+!.tmp/.gitkeep
