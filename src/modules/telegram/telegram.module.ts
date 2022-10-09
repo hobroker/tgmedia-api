@@ -7,6 +7,6 @@ import { TelegramAuthService, TelegramService } from './services';
 @Module({
   imports: [ConfigModule.forFeature(telegramConfig), HandbrakeModule],
   providers: [TelegramService, TelegramAuthService],
-  exports: [TelegramService],
+  exports: [TelegramService, TelegramAuthService],
 })
 export class TelegramModule {}
