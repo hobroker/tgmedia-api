@@ -5,7 +5,6 @@ import { HandbrakeService } from '../../handbrake';
 import { messengerConfig } from '../messenger.config';
 import { IMovie } from '../../radarr';
 import { Movie } from '../entities';
-import { delay } from '../../../util/promise';
 
 @Injectable()
 export class MessengerService {
