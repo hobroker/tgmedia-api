@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/hobroker/tgmedia-api/compare/v1.1.0...v1.2.0) (2022-10-09)
+
+
+### Features
+
+* use official telegram package and replace bot with user ([#4](https://github.com/hobroker/tgmedia-api/issues/4)) ([eddf284](https://github.com/hobroker/tgmedia-api/commit/eddf284d1ef0e7b555725332d034104e6a00302f))
+
 # [1.1.0](https://github.com/hobroker/tgmedia-api/compare/v1.0.1...v1.1.0) (2022-10-08)
 
 
