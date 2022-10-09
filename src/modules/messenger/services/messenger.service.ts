@@ -1,19 +1,17 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
-import { TelegramBotService } from '../../telegram';
+import { TelegramService } from '../../telegram';
 import { HandbrakeService } from '../../handbrake';
-import { noop } from '../../../util/noop';
 import { messengerConfig } from '../messenger.config';
 import { IMovie } from '../../radarr';
 import { Movie } from '../entities';
-import { throttle } from '../../../util/throttle';
 
 @Injectable()
 export class MessengerService {
   constructor(
     @Inject(messengerConfig.KEY)
     private config: ConfigType<typeof messengerConfig>,
-    private readonly telegramBotService: TelegramBotService,
+    private readonly telegramService: TelegramService,
     private readonly handbrakeService: HandbrakeService,
   ) {}
 
@@ -22,56 +20,50 @@ export class MessengerService {
       overrideMediaPath: this.config.overrideMediaPath,
     });
 
-    const message = await this.sendMainMessage(movie);
-    const discussionMessage =
-      await this.telegramBotService.waitForDiscussionMessage(
-        message.message_id,
-      );
-
-    const video = await this.convertVideo(
-      discussionMessage.message_id,
-      movie.file,
-    );
-
-    await this.telegramBotService.sendVideoToDiscussion(
-      discussionMessage.message_id,
-      {
-        caption: movie.title,
-        video,
-      },
-    );
-  }
-
-  private async sendMainMessage(movie: Movie) {
-    return this.telegramBotService.sendPhoto({
+    const message = await this.telegramService.sendPhotoToChannel({
       caption: movie.caption,
-      image: movie.image,
+      file: movie.image,
     });
+    const discussionMessage =
+      await this.telegramService.waitForDiscussionMessage(message.id);
+
+    movie.video = await this.convertVideo(discussionMessage.id, movie);
+    await this.sendVideo(discussionMessage.id, movie);
   }
 
-  private async convertVideo(
-    discussionMessageId: number,
-    movieFilePath: string,
-  ) {
-    const updateMessage = await this.telegramBotService.sendMessageToDiscussion(
-      'starting to encode the video...',
-      discussionMessageId,
-    );
+  private async sendVideo(replyTo: number, movie: Movie) {
+    const [updateMessage, deleteMessage] =
+      await this.telegramService.createUpdatingMessageToDiscussion({
+        replyTo,
+        message: 'uploading the video...',
+      });
 
-    const onProgress = throttle(async (progress) => {
-      await this.telegramBotService
-        .updateDiscussionMessage(progress, updateMessage.message_id)
-        .catch(noop);
-    }, 1000);
+    const progressCallback = (progress: number) =>
+      updateMessage(`uploading the video... ${progress}%`);
+
+    await this.telegramService.sendVideoToDiscussion({
+      replyTo,
+      caption: movie.title,
+      file: movie.video,
+      progressCallback,
+    });
+
+    await deleteMessage();
+  }
+
+  private async convertVideo(replyTo: number, movie: Movie) {
+    const [updateMessage, deleteMessage] =
+      await this.telegramService.createUpdatingMessageToDiscussion({
+        replyTo,
+        message: 'encoding the video...',
+      });
 
     const video = await this.handbrakeService.convert(
-      movieFilePath,
-      onProgress,
+      movie.video,
+      updateMessage,
     );
 
-    await this.telegramBotService.deleteDiscussionMessage(
-      updateMessage.message_id,
-    );
+    await deleteMessage();
 
     return video;
   }

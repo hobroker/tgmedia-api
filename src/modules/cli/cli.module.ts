@@ -1,11 +1,17 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { HandbrakeModule } from '../handbrake';
+import { TelegramModule } from '../telegram';
 import { cliConfig } from './cli.config';
 import * as Commands from './commands';
 
 @Module({
-  imports: [ConfigModule.forFeature(cliConfig), HandbrakeModule],
+  imports: [
+    ConfigModule.forRoot({
+      envFilePath: ['.env', '.env.production'],
+    }),
+    ConfigModule.forFeature(cliConfig),
+    TelegramModule,
+  ],
   providers: [...Object.values(Commands)],
 })
 export class CliModule {}
