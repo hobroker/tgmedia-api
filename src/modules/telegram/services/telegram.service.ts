@@ -35,7 +35,7 @@ export class TelegramService {
       file,
       caption,
       parseMode: 'html',
-      videoNote: true,
+      supportsStreaming: true,
       progressCallback: (progress: number) => {
         const percent = Math.round(progress * 10000) / 100;
 

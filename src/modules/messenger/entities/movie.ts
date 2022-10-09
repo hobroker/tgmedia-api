@@ -16,6 +16,10 @@ export class Movie {
     this.overrideMediaPath = overrideMediaPath;
   }
 
+  toString() {
+    return this.movie.title;
+  }
+
   get title() {
     return `<b>${this.movie.title}</b>`;
   }

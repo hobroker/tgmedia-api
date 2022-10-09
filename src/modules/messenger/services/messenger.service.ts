@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import { TelegramService } from '../../telegram';
 import { HandbrakeService } from '../../handbrake';
@@ -8,6 +8,8 @@ import { Movie } from '../entities';
 
 @Injectable()
 export class MessengerService {
+  private readonly logger = new Logger(this.constructor.name);
+
   constructor(
     @Inject(messengerConfig.KEY)
     private config: ConfigType<typeof messengerConfig>,
@@ -20,6 +22,7 @@ export class MessengerService {
       overrideMediaPath: this.config.overrideMediaPath,
     });
 
+    this.logger.debug('sending main message to the channel', movie.toString());
     const message = await this.telegramService.sendPhotoToChannel({
       caption: movie.caption,
       file: movie.image,
@@ -28,18 +31,25 @@ export class MessengerService {
       await this.telegramService.waitForDiscussionMessage(message.id);
 
     movie.video = await this.convertVideo(discussionMessage.id, movie);
+
     await this.sendVideo(discussionMessage.id, movie);
   }
 
   private async sendVideo(replyTo: number, movie: Movie) {
+    this.logger.debug('sending video to discussion', movie.video);
     const [updateMessage, deleteMessage] =
       await this.telegramService.createUpdatingMessageToDiscussion({
         replyTo,
         message: 'uploading the video...',
       });
 
-    const progressCallback = (progress: number) =>
-      updateMessage(`uploading the video... ${progress}%`);
+    const progressCallback = (progress: number) => {
+      const text = `uploading the video... ${progress}%`;
+
+      this.logger.debug(text);
+
+      return updateMessage(text);
+    };
 
     await this.telegramService.sendVideoToDiscussion({
       replyTo,
@@ -52,15 +62,21 @@ export class MessengerService {
   }
 
   private async convertVideo(replyTo: number, movie: Movie) {
+    this.logger.debug('encoding the video', movie.video);
     const [updateMessage, deleteMessage] =
       await this.telegramService.createUpdatingMessageToDiscussion({
         replyTo,
         message: 'encoding the video...',
       });
+    const progressCallback = (progress: string) => {
+      this.logger.debug(progress);
+
+      return updateMessage(progress);
+    };
 
     const video = await this.handbrakeService.convert(
       movie.video,
-      updateMessage,
+      progressCallback,
     );
 
     await deleteMessage();
