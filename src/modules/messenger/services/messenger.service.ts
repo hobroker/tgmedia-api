@@ -5,6 +5,7 @@ import { HandbrakeService } from '../../handbrake';
 import { messengerConfig } from '../messenger.config';
 import { IMovie } from '../../radarr';
 import { Movie } from '../entities';
+import { delay } from '../../../util/promise';
 
 @Injectable()
 export class MessengerService {
@@ -27,19 +28,17 @@ export class MessengerService {
       caption: movie.caption,
       file: movie.image,
     });
-    const discussionMessage =
-      await this.telegramService.waitForDiscussionMessage(message.id);
 
-    movie.video = await this.convertVideo(discussionMessage.id, movie);
+    movie.video = await this.convertVideo({ commentTo: message.id }, movie);
 
-    await this.sendVideo(discussionMessage.id, movie);
+    await this.sendVideo({ commentTo: message.id }, movie);
   }
 
-  private async sendVideo(replyTo: number, movie: Movie) {
+  private async sendVideo({ commentTo }: { commentTo: number }, movie: Movie) {
     this.logger.debug('sending video to discussion', movie.video);
     const [updateMessage, deleteMessage] =
-      await this.telegramService.createUpdatingMessageToDiscussion({
-        replyTo,
+      await this.telegramService.createUpdatingCommentToChannel({
+        commentTo,
         message: 'uploading the video...',
       });
 
@@ -51,8 +50,8 @@ export class MessengerService {
       return updateMessage(text);
     };
 
-    await this.telegramService.sendVideoToDiscussion({
-      replyTo,
+    await this.telegramService.commentVideoToChannel({
+      commentTo,
       caption: movie.title,
       file: movie.video,
       progressCallback,
@@ -61,11 +60,14 @@ export class MessengerService {
     await deleteMessage();
   }
 
-  private async convertVideo(replyTo: number, movie: Movie) {
+  private async convertVideo(
+    { commentTo }: { commentTo: number },
+    movie: Movie,
+  ) {
     this.logger.debug('encoding the video', movie.video);
     const [updateMessage, deleteMessage] =
-      await this.telegramService.createUpdatingMessageToDiscussion({
-        replyTo,
+      await this.telegramService.createUpdatingCommentToChannel({
+        commentTo,
         message: 'encoding the video...',
       });
     const progressCallback = (progress: string) => {

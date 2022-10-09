@@ -19,7 +19,7 @@ export class TestCommand extends CommandRunner {
   async run() {
     this.logger.log('Running test command');
     await this.telegramService
-      .sendVideoToDiscussion({
+      .commentVideoToChannel({
         file: '/Users/ileahu/Documents/hb/original.mp4',
         caption: 'Test',
         progressCallback: compose(console.log, flip(concat('%')), String),

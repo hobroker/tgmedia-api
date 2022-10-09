@@ -11,7 +11,6 @@ import { TelegramAuthService } from './telegram-auth.service';
 
 @Injectable()
 export class TelegramService {
-  private readonly logger = new Logger(this.constructor.name);
   private readonly client: TelegramClient;
   constructor(
     @Inject(telegramConfig.KEY)
@@ -21,17 +20,17 @@ export class TelegramService {
     this.client = telegramAuthService.client;
   }
 
-  async sendVideoToDiscussion({
+  async commentVideoToChannel({
     file,
     caption,
-    replyTo,
+    commentTo,
     progressCallback,
   }: Pick<
     SendFileInterface,
-    'caption' | 'file' | 'progressCallback' | 'replyTo'
+    'caption' | 'file' | 'progressCallback' | 'commentTo'
   >) {
-    return await this.client.sendFile(this.config.discussionChatId, {
-      replyTo,
+    return await this.client.sendFile(this.config.chatId, {
+      commentTo,
       file,
       caption,
       parseMode: 'html',
@@ -55,45 +54,26 @@ export class TelegramService {
     });
   }
 
-  async sendMessageToDiscussion({
+  async commentMessageToChannel({
     message,
-    replyTo,
-  }: Pick<SendMessageParams, 'message' | 'replyTo'>) {
-    return this.client.sendMessage(this.config.discussionChatId, {
-      replyTo,
+    commentTo,
+  }: Pick<SendMessageParams, 'message' | 'commentTo'>) {
+    return this.client.sendMessage(this.config.chatId, {
+      commentTo,
       message,
       parseMode: 'html',
     });
   }
 
-  async waitForDiscussionMessage(messageId: number) {
-    const messageEvent = new NewMessage({
-      chats: [this.config.discussionChatId],
-    });
-
-    return new Promise<Api.Message>((resolve) => {
-      const handler = (event: NewMessageEvent) => {
-        if (event.message.fwdFrom.savedFromMsgId !== messageId) {
-          return;
-        }
-
-        this.client.removeEventHandler(handler, messageEvent);
-        resolve(event.message);
-      };
-
-      this.client.addEventHandler(handler, messageEvent);
-    });
-  }
-
-  async createUpdatingMessageToDiscussion({
+  async createUpdatingCommentToChannel({
     message,
-    replyTo,
-  }: Pick<SendMessageParams, 'message' | 'replyTo'>): Promise<
+    commentTo,
+  }: Pick<SendMessageParams, 'message' | 'commentTo'>): Promise<
     [(text: string) => Promise<void>, () => Promise<void>]
   > {
-    const _message = await this.sendMessageToDiscussion({
+    const _message = await this.commentMessageToChannel({
       message,
-      replyTo,
+      commentTo,
     });
 
     const updateProgressMessage = throttle(async (text) => {
@@ -111,13 +91,5 @@ export class TelegramService {
     };
 
     return [updateProgressMessage, deleteProgressMessage];
-  }
-
-  private get channelEntity() {
-    return this.client.getEntity(this.config.chatId);
-  }
-
-  private get discussionEntity() {
-    return this.client.getEntity(this.config.discussionChatId);
   }
 }
