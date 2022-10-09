@@ -1,96 +1,94 @@
-import { readFileSync } from 'fs';
-import { Inject, Injectable, Logger } from '@nestjs/common';
-import * as TelegramBot from 'node-telegram-bot-api';
+import { Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
+import { TelegramClient } from 'telegram';
+import { SendFileInterface } from 'telegram/client/uploads';
+import { SendMessageParams } from 'telegram/client/messages';
 import { telegramConfig } from '../telegram.config';
+import { throttle } from '../../../util/throttle';
+import { noop } from '../../../util/noop';
+import { TelegramAuthService } from './telegram-auth.service';
 
 @Injectable()
 export class TelegramService {
-  private bot: TelegramBot;
-  private readonly logger = new Logger(this.constructor.name);
-
+  private readonly client: TelegramClient;
   constructor(
     @Inject(telegramConfig.KEY)
     private config: ConfigType<typeof telegramConfig>,
+    private readonly telegramAuthService: TelegramAuthService,
   ) {
-    this.bot = new TelegramBot(config.token, {
-      polling: true,
+    this.client = telegramAuthService.client;
+  }
+
+  async commentVideoToChannel({
+    file,
+    caption,
+    commentTo,
+    progressCallback,
+  }: Pick<
+    SendFileInterface,
+    'caption' | 'file' | 'progressCallback' | 'commentTo'
+  >) {
+    return await this.client.sendFile(this.config.chatId, {
+      commentTo,
+      file,
+      caption,
+      parseMode: 'html',
+      supportsStreaming: true,
+      progressCallback: (progress: number) => {
+        const percent = Math.round(progress * 10000) / 100;
+
+        progressCallback?.(percent);
+      },
     });
   }
 
-  async sendMessageToDiscussion(text: string, discussionMessageId: number) {
-    return this.bot.sendMessage(this.config.replyChatId, text, {
-      parse_mode: 'HTML',
-      reply_to_message_id: discussionMessageId,
+  async sendPhotoToChannel({
+    caption,
+    file,
+  }: Pick<SendFileInterface, 'caption' | 'file'>) {
+    return this.client.sendFile(this.config.chatId, {
+      caption,
+      file,
+      parseMode: 'html',
     });
   }
 
-  async updateDiscussionMessage(text: string, discussionMessageId: number) {
-    return this.bot.editMessageText(text, {
-      parse_mode: 'HTML',
-      message_id: discussionMessageId,
-      chat_id: this.config.replyChatId,
+  async commentMessageToChannel({
+    message,
+    commentTo,
+  }: Pick<SendMessageParams, 'message' | 'commentTo'>) {
+    return this.client.sendMessage(this.config.chatId, {
+      commentTo,
+      message,
+      parseMode: 'html',
     });
   }
 
-  async deleteDiscussionMessage(discussionMessageId: number) {
-    console.log('discussionMessageId', discussionMessageId);
-
-    return this.bot.deleteMessage(
-      this.config.replyChatId,
-      discussionMessageId.toString(),
-    );
-  }
-
-  async sendPhoto({ caption, image }: { caption: string; image: string }) {
-    return this.bot.sendPhoto(
-      this.config.chatId,
-      image,
-      {
-        caption,
-        parse_mode: 'HTML',
-      },
-      {
-        contentType: 'application/octet-stream',
-      },
-    );
-  }
-
-  async sendVideoToDiscussion(
-    discussionMessageId: number,
-    { caption, video }: { caption: string; video: string },
-  ) {
-    const buffer = readFileSync(video);
-
-    return this.bot.sendVideo(
-      this.config.replyChatId,
-      buffer,
-      {
-        caption,
-        parse_mode: 'HTML',
-        reply_to_message_id: discussionMessageId,
-      },
-      {
-        contentType: 'application/octet-stream',
-      },
-    );
-  }
-
-  async waitForDiscussionMessage(messageId: number) {
-    return new Promise<TelegramBot.Message>((resolve) => {
-      const handler = (message: TelegramBot.Message) => {
-        if (
-          message.chat.id !== this.config.replyChatId ||
-          message.forward_from_message_id !== messageId
-        ) {
-          return;
-        }
-
-        this.bot.removeListener('message', handler);
-        resolve(message);
-      };
-
-      this.bot.on('message', handler);
+  async createUpdatingCommentToChannel({
+    message,
+    commentTo,
+  }: Pick<SendMessageParams, 'message' | 'commentTo'>): Promise<
+    [(text: string) => Promise<void>, () => Promise<void>]
+  > {
+    const _message = await this.commentMessageToChannel({
+      message,
+      commentTo,
     });
+
+    const updateProgressMessage = throttle(async (text) => {
+      await this.client
+        .editMessage(_message.chatId, {
+          text,
+          parseMode: 'html',
+          message: _message.id,
+        })
+        .catch(noop);
+    }, 1000);
+
+    const deleteProgressMessage = async () => {
+      await this.client.deleteMessages(_message.chatId, [_message.id], {});
+    };
+
+    return [updateProgressMessage, deleteProgressMessage];
   }
 }

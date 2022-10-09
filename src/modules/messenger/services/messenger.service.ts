@@ -1,15 +1,15 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import { TelegramService } from '../../telegram';
 import { HandbrakeService } from '../../handbrake';
-import { noop } from '../../../util/noop';
 import { messengerConfig } from '../messenger.config';
 import { IMovie } from '../../radarr';
 import { Movie } from '../entities';
-import { throttle } from '../../../util/throttle';
 
 @Injectable()
 export class MessengerService {
+  private readonly logger = new Logger(this.constructor.name);
+
   constructor(
     @Inject(messengerConfig.KEY)
     private config: ConfigType<typeof messengerConfig>,
@@ -22,54 +22,65 @@ export class MessengerService {
       overrideMediaPath: this.config.overrideMediaPath,
     });
 
-    const message = await this.sendMainMessage(movie);
-    const discussionMessage =
-      await this.telegramService.waitForDiscussionMessage(message.message_id);
+    this.logger.debug('sending main message to the channel', movie.toString());
+    const message = await this.telegramService.sendPhotoToChannel({
+      caption: movie.caption,
+      file: movie.image,
+    });
 
-    const video = await this.convertVideo(
-      discussionMessage.message_id,
-      movie.file,
-    );
+    movie.video = await this.convertVideo({ commentTo: message.id }, movie);
 
-    await this.telegramService.sendVideoToDiscussion(
-      discussionMessage.message_id,
-      {
-        caption: movie.title,
-        video,
-      },
-    );
+    await this.sendVideo({ commentTo: message.id }, movie);
   }
 
-  private async sendMainMessage(movie: Movie) {
-    return this.telegramService.sendPhoto({
-      caption: movie.caption,
-      image: movie.image,
+  private async sendVideo({ commentTo }: { commentTo: number }, movie: Movie) {
+    this.logger.debug('sending video to discussion', movie.video);
+    const [updateMessage, deleteMessage] =
+      await this.telegramService.createUpdatingCommentToChannel({
+        commentTo,
+        message: 'uploading the video...',
+      });
+
+    const progressCallback = (progress: number) => {
+      const text = `uploading the video... ${progress}%`;
+
+      this.logger.debug(text);
+
+      return updateMessage(text);
+    };
+
+    await this.telegramService.commentVideoToChannel({
+      commentTo,
+      caption: movie.title,
+      file: movie.video,
+      progressCallback,
     });
+
+    await deleteMessage();
   }
 
   private async convertVideo(
-    discussionMessageId: number,
-    movieFilePath: string,
+    { commentTo }: { commentTo: number },
+    movie: Movie,
   ) {
-    const updateMessage = await this.telegramService.sendMessageToDiscussion(
-      'starting to encode the video...',
-      discussionMessageId,
-    );
+    this.logger.debug('encoding the video', movie.video);
+    const [updateMessage, deleteMessage] =
+      await this.telegramService.createUpdatingCommentToChannel({
+        commentTo,
+        message: 'encoding the video...',
+      });
+    const progressCallback = (progress: string) => {
+      this.logger.debug(progress);
 
-    const onProgress = throttle(async (progress) => {
-      await this.telegramService
-        .updateDiscussionMessage(progress, updateMessage.message_id)
-        .catch(noop);
-    }, 1000);
+      return updateMessage(progress);
+    };
 
     const video = await this.handbrakeService.convert(
-      movieFilePath,
-      onProgress,
+      movie.video,
+      progressCallback,
     );
 
-    await this.telegramService.deleteDiscussionMessage(
-      updateMessage.message_id,
-    );
+    await deleteMessage();
 
     return video;
   }

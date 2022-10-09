@@ -16,6 +16,10 @@ export class Movie {
     this.overrideMediaPath = overrideMediaPath;
   }
 
+  toString() {
+    return this.movie.title;
+  }
+
   get title() {
     return `<b>${this.movie.title}</b>`;
   }
@@ -36,7 +40,11 @@ export class Movie {
     ].join('\n\n');
   }
 
-  get file() {
+  get video() {
     return this.overrideMediaPath || this.movie.movieFile.path;
+  }
+
+  set video(value: string) {
+    this.movie.movieFile.path = value;
   }
 }

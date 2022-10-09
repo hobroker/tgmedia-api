@@ -17,16 +17,22 @@ export class HandbrakeService {
     if (!this.shouldConvert(input)) {
       return input;
     }
-    const output = path.format({
-      ...path.parse(input),
-      base: '',
-      dir: this.config.tmpFolder,
-      ext: '.mp4',
-    });
+
+    const output = path.resolve(
+      path.format({
+        ...path.parse(input),
+        dir: this.config.tmpFolder,
+        ext: '.mp4',
+      }),
+    );
+
+    this.logger.debug('outout', output);
 
     const log = (data) => {
-      if (!data.includes('Encoding')) return;
-      callback?.(data);
+      const text = data.split('\n').find((item) => item.includes('Encoding'));
+
+      if (!data.includes(text)) return;
+      callback?.(text);
     };
 
     return new Promise<string>((resolve) => {
