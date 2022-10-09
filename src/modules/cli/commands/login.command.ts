@@ -1,7 +1,7 @@
 import { Command, CommandRunner } from 'nest-commander';
-import { WithDuration } from '../util';
-import { TelegramAuthService, TelegramService } from '../../telegram';
 import { Logger } from '@nestjs/common';
+import { WithDuration } from '../util';
+import { TelegramAuthService } from '../../telegram';
 
 @Command({
   name: 'login',
