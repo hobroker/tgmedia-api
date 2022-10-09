@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/hobroker/tgmedia-api/compare/v1.2.0...v1.2.1) (2022-10-09)
+
+
+### Bug Fixes
+
+* export TelegramAuthService ([#5](https://github.com/hobroker/tgmedia-api/issues/5)) ([51eeeb6](https://github.com/hobroker/tgmedia-api/commit/51eeeb6d0bea7e35f65bc69cbdc62b66a23d3589))
+
 # [1.2.0](https://github.com/hobroker/tgmedia-api/compare/v1.1.0...v1.2.0) (2022-10-09)
 
 
