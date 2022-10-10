@@ -2,13 +2,15 @@ import { spawn } from 'child_process';
 import svelte from 'rollup-plugin-svelte';
 import commonjs from '@rollup/plugin-commonjs';
 import resolve from '@rollup/plugin-node-resolve';
-import livereload from 'rollup-plugin-livereload';
+// import livereload from 'rollup-plugin-livereload';
 import { terser } from 'rollup-plugin-terser';
 import sveltePreprocess from 'svelte-preprocess';
 import typescript from '@rollup/plugin-typescript';
 import css from 'rollup-plugin-css-only';
 
 const production = !process.env.ROLLUP_WATCH;
+
+let started = false;
 
 function serve() {
   let server;
@@ -19,7 +21,8 @@ function serve() {
 
   return {
     writeBundle() {
-      if (server) return;
+      if (started) return;
+      started = true;
       server = spawn('npm', ['run', 'dev:server'], {
         stdio: ['ignore', 'inherit', 'inherit'],
         shell: true,
@@ -65,7 +68,7 @@ export default {
       sourceMap: !production,
       inlineSources: !production,
       include: ['src/client/**/*'],
-      exclude: ['node_modules/*', '__sapper__/*', 'public/*', 'dist/*'],
+      exclude: ['node_modules/*', 'public/*', 'dist/*'],
       outputToFilesystem: false,
       compilerOptions: {
         module: 'esnext',
@@ -74,11 +77,11 @@ export default {
 
     // In dev mode, call `npm run start` once
     // the bundle has been generated
-    !production && serve(),
+    // !production && serve(),
 
     // Watch the `public` directory and refresh the
     // browser on changes when not in production
-    !production && livereload('public'),
+    // !production && livereload('public'),
 
     // If we're building for production (npm run build
     // instead of npm run dev), minify

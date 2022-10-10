@@ -1,30 +1,23 @@
 <script>
-	export let name;
+  import CircularProgress from '@smui/circular-progress';
+  import { prop } from 'ramda';
+  import Movies from './components/Movies.svelte';
+
+  let movies;
+
+  fetch('/v1/radarr')
+    .then((response) => response.json())
+    .then((response) => {
+      movies = response.filter(prop('movieFile'));
+    });
 </script>
 
 <main>
-	<h1>Hello {name}!</h1>
-	<p>Visit the <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p>
+  {#if movies}
+    <Movies {movies} />
+  {:else}
+    <div style="display: flex; justify-content: center">
+      <CircularProgress style="height: 32px; width: 32px;" indeterminate />
+    </div>
+  {/if}
 </main>
-
-<style>
-	main {
-		text-align: center;
-		padding: 1em;
-		max-width: 240px;
-		margin: 0 auto;
-	}
-
-	h1 {
-		color: green;
-		text-transform: uppercase;
-		font-size: 4em;
-		font-weight: 100;
-	}
-
-	@media (min-width: 640px) {
-		main {
-			max-width: none;
-		}
-	}
-</style>
