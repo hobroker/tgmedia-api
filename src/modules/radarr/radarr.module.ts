@@ -3,7 +3,6 @@ import { ConfigModule } from '@nestjs/config';
 import { HttpModule } from '../http';
 import { radarrConfig } from './radarr.config';
 import { RadarrService, RadarrHttpConfigService } from './services';
-import { RadarrController } from './controllers';
 
 @Module({
   imports: [
@@ -14,7 +13,6 @@ import { RadarrController } from './controllers';
     }),
   ],
   providers: [RadarrService],
-  controllers: [RadarrController],
   exports: [RadarrService],
 })
 export class RadarrModule {}
