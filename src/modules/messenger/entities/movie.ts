@@ -20,6 +20,10 @@ export class Movie {
     return this.movie.title;
   }
 
+  get id() {
+    return this.movie.id;
+  }
+
   get title() {
     return `<b>${this.movie.title}</b>`;
   }
