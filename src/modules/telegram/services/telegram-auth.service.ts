@@ -1,5 +1,5 @@
 import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import { ConfigType } from '@nestjs/config';
+import type { ConfigType } from '@nestjs/config';
 import { TelegramClient } from 'telegram';
 import { StoreSession } from 'telegram/sessions';
 import { text } from 'input';

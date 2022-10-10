@@ -1,9 +1,9 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import { ConfigType } from '@nestjs/config';
+import type { ConfigType } from '@nestjs/config';
 import { TelegramService } from '../../telegram';
 import { HandbrakeService } from '../../handbrake';
 import { messengerConfig } from '../messenger.config';
-import { IMovie } from '../../radarr';
+import type { IMovie } from '../../radarr';
 import { Movie } from '../entities';
 
 @Injectable()
@@ -38,15 +38,15 @@ export class MessengerService {
     const [updateMessage, deleteMessage] =
       await this.telegramService.createUpdatingCommentToChannel({
         commentTo,
-        message: 'uploading the video...',
+        message: '<code>starting to upload...</code>',
       });
 
     const progressCallback = (progress: number) => {
-      const text = `uploading the video... ${progress}%`;
+      const text = `uploading... ${progress}%`;
 
       this.logger.debug(text);
 
-      return updateMessage(text);
+      return updateMessage(`<code>${text}</code>`);
     };
 
     await this.telegramService.commentVideoToChannel({
@@ -67,12 +67,12 @@ export class MessengerService {
     const [updateMessage, deleteMessage] =
       await this.telegramService.createUpdatingCommentToChannel({
         commentTo,
-        message: 'encoding the video...',
+        message: '<code>starting to encode...</code>',
       });
     const progressCallback = (progress: string) => {
       this.logger.debug(progress);
 
-      return updateMessage(progress);
+      return updateMessage(`<code>${progress}</code>`);
     };
 
     const video = await this.handbrakeService.convert(

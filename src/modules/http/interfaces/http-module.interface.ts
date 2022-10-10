@@ -1,6 +1,6 @@
-import { ModuleMetadata, Provider, Type } from '@nestjs/common';
-import { AxiosRequestConfig } from 'axios';
-import { IAxiosRetryConfig } from 'axios-retry';
+import type { ModuleMetadata, Provider, Type } from '@nestjs/common';
+import type { AxiosRequestConfig } from 'axios';
+import type { IAxiosRetryConfig } from 'axios-retry';
 
 export type HttpModuleOptions = AxiosRequestConfig & IAxiosRetryConfig;
 

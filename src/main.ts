@@ -1,7 +1,7 @@
+import type { NestExpressApplication } from '@nestjs/platform-express';
 import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { Logger, RequestMethod } from '@nestjs/common';
-import { NestExpressApplication } from '@nestjs/platform-express';
 import { LoggerService } from './modules/logger';
 import { AppModule } from './app.module';
 import { APP_MODULE_ID, CORS_ORIGINS } from './app.constants';

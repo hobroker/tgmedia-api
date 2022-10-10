@@ -1,3 +1,3 @@
-export { IMovie } from './movie';
-export { IImage } from './image';
-export { ICredit } from './credit';
+export type { IMovie } from './movie';
+export type { IImage } from './image';
+export type { ICredit } from './credit';

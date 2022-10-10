@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { ConfigType } from '@nestjs/config';
-import { HttpModuleOptions, HttpModuleOptionsFactory } from '../../http';
+import type { ConfigType } from '@nestjs/config';
+import type { HttpModuleOptions, HttpModuleOptionsFactory } from '../../http';
 import { radarrConfig } from '../radarr.config';
 
 @Injectable()

@@ -1,6 +1,6 @@
 import { compose, concat, prop, propEq, replace } from 'ramda';
 import { CoverType } from '@jc21/radarr-api/lib/models/enums/CoverType';
-import { IMovie } from '../../radarr';
+import type { IMovie } from '../../radarr';
 
 const toTag = compose(concat('#'), replace(/\s/g, ''));
 

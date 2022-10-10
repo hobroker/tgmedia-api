@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { ConfigType } from '@nestjs/config';
-import { TelegramClient } from 'telegram';
-import { SendFileInterface } from 'telegram/client/uploads';
-import { SendMessageParams } from 'telegram/client/messages';
+import type { ConfigType } from '@nestjs/config';
+import type { TelegramClient } from 'telegram';
+import type { SendFileInterface } from 'telegram/client/uploads';
+import type { SendMessageParams } from 'telegram/client/messages';
 import { telegramConfig } from '../telegram.config';
 import { throttle } from '../../../util/throttle';
 import { noop } from '../../../util/noop';

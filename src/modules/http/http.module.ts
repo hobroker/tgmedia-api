@@ -8,7 +8,7 @@ import {
   HTTP_MODULE_OPTIONS,
 } from './http.constants';
 import { HttpService } from './http.service';
-import {
+import type {
   HttpModuleAsyncOptions,
   HttpModuleOptions,
   HttpModuleOptionsFactory,

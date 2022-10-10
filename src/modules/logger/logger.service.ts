@@ -1,4 +1,4 @@
-import { LoggerService as LoggerServiceInterface } from '@nestjs/common';
+import type { LoggerService as LoggerServiceInterface } from '@nestjs/common';
 import { CustomLogger } from './util';
 
 export class LoggerService implements LoggerServiceInterface {
