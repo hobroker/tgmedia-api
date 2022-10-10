@@ -12,7 +12,7 @@ class Table {
   }
 
   addActions() {
-    this.tbody.querySelectorAll('button').forEach((button, index) => {
+    this.tbody.querySelectorAll('button').forEach((button) => {
       const { id } = button.dataset;
 
       button.addEventListener('click', () => {
@@ -35,7 +35,7 @@ class Table {
 
         return `<tr>
             <td class="w-100">
-              <img src="${poster}" alt="${title}" class="image is-128x128" />
+              <img src="${poster}" alt="${title}" class="image w-100" />
             </td>
             <td class="w-192">
               <p class="title is-6">${title}</p>
