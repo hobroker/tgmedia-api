@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/hobroker/tgmedia-api/compare/v1.2.1...v1.3.0) (2022-10-10)
+
+
+### Features
+
+* add interface ([#7](https://github.com/hobroker/tgmedia-api/issues/7)) ([f57afcc](https://github.com/hobroker/tgmedia-api/commit/f57afcc39bc31ca84557d1560fdaecdee9a048c4))
+
 ## [1.2.1](https://github.com/hobroker/tgmedia-api/compare/v1.2.0...v1.2.1) (2022-10-09)
 
 
