@@ -77,6 +77,7 @@ export class MessengerService {
 
     const video = await this.handbrakeService.convert(
       movie.video,
+      `${movie.id}.mp4`,
       progressCallback,
     );
 

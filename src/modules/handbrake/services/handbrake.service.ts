@@ -13,27 +13,26 @@ export class HandbrakeService {
     private config: ConfigType<typeof handbrakeConfig>,
   ) {}
 
-  async convert(input: string, callback?: (progress: string) => void) {
+  async convert(
+    input: string,
+    filename: string,
+    callback?: (progress: string) => void,
+  ) {
+    this.logger.debug('input', input);
+
     if (!this.shouldConvert(input)) {
       return input;
     }
 
-    const output = path.resolve(
-      path.format({
-        ...path.parse(input),
-        dir: this.config.tmpFolder,
-        ext: '.mp4',
-      }),
-    );
-
-    this.logger.debug('outout', output);
-
+    const output = path.resolve(this.config.tmpFolder, filename);
     const log = (data) => {
       const text = data.split('\n').find((item) => item.includes('Encoding'));
 
       if (!data.includes(text)) return;
       callback?.(text);
     };
+
+    this.logger.debug('output', output);
 
     return new Promise<string>((resolve) => {
       const child = spawn('HandBrakeCLI', [
