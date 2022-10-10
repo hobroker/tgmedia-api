@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/hobroker/tgmedia-api/compare/v1.3.0...v1.3.1) (2022-10-10)
+
+
+### Bug Fixes
+
+* wrong encoding file extension [#9](https://github.com/hobroker/tgmedia-api/issues/9)  ([#9](https://github.com/hobroker/tgmedia-api/issues/9)) ([e7e2c69](https://github.com/hobroker/tgmedia-api/commit/e7e2c694ee0a813e1013fee331691e6304d620c0))
+
 # [1.3.0](https://github.com/hobroker/tgmedia-api/compare/v1.2.1...v1.3.0) (2022-10-10)
 
 
