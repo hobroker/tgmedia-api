@@ -1,0 +1,15 @@
+.image {
+  object-fit: contain;
+}
+
+.w-100 {
+  width: 100px;
+}
+
+.w-128 {
+  width: 128px;
+}
+
+.w-192 {
+  width: 192px;
+}

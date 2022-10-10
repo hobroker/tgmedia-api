@@ -43,6 +43,7 @@
     "@nestjs/config": "^2.2.0",
     "@nestjs/core": "9.1.4",
     "@nestjs/platform-express": "9.1.4",
+    "@nestjs/serve-static": "^3.0.0",
     "@nestjs/terminus": "^9.1.2",
     "@prisma/client": "^4.4.0",
     "axios": "^0.21.1",
