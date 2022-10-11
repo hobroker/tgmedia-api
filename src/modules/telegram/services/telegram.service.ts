@@ -72,7 +72,7 @@ export class TelegramService {
   }: Pick<SendMessageParams, 'message' | 'commentTo'>): Promise<
     [(text: string) => Promise<void>, () => Promise<void>]
   > {
-    const _message = await this.commentMessageToChannel({
+    const { chatId, id } = await this.commentMessageToChannel({
       message,
       commentTo,
       silent: true,
@@ -80,16 +80,16 @@ export class TelegramService {
 
     const updateProgressMessage = throttle(async (text) => {
       await this.client
-        .editMessage(_message.chatId, {
+        .editMessage(chatId, {
           text,
           parseMode: 'html',
-          message: _message.id,
+          message: id,
         })
         .catch(noop);
     }, 1000);
 
     const deleteProgressMessage = async () => {
-      await this.client.deleteMessages(_message.chatId, [_message.id], {});
+      await this.client.deleteMessages(chatId, [id], {});
     };
 
     return [updateProgressMessage, deleteProgressMessage];
