@@ -10,12 +10,12 @@ export class MediaController {
     private readonly sonarrService: SonarrService,
   ) {}
 
-  @Get()
+  @Get('movies')
   listMovies() {
     return this.radarrService.list();
   }
 
-  @Get()
+  @Get('shows')
   listShows() {
     return this.sonarrService.list();
   }

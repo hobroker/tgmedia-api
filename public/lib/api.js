@@ -1,6 +1,6 @@
 class API {
   getMovies() {
-    return fetch('/v1/radarr')
+    return fetch('/v1/media/movies')
       .then((response) => response.json())
       .then((response) =>
         response
