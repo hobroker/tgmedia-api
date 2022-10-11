@@ -12,14 +12,28 @@
   </head>
   <body>
     <div class="container">
-      <section class="hero is-primary is-small">
+      <section class="hero is-info is-small">
         <div class="hero-body">
           <p class="title">TGMedia</p>
         </div>
       </section>
+      <div class="tabs is-centered is-boxed is-medium mt-4" id="tabs">
+        <ul>
+          <li>
+            <a href="#tab-movies">
+              <span>Movies</span>
+            </a>
+          </li>
+          <li>
+            <a href="#tab-shows">
+              <span>TV Shows</span>
+            </a>
+          </li>
+        </ul>
+      </div>
       <div class="mt-4">
         <progress
-          class="progress is-large is-primary"
+          class="progress is-large is-info"
           id="table-loading"
         ></progress>
         <table
@@ -39,6 +53,8 @@
       </div>
     </div>
     <script src="/lib/api.js"></script>
+    <script src="/lib/tabs.js"></script>
     <script src="/lib/table.js"></script>
+    <script src="/lib/index.js"></script>
   </body>
 </html>
