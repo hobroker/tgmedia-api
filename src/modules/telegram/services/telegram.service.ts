@@ -56,10 +56,12 @@ export class TelegramService {
   async commentMessageToChannel({
     message,
     commentTo,
-  }: Pick<SendMessageParams, 'message' | 'commentTo'>) {
+    silent,
+  }: Pick<SendMessageParams, 'message' | 'commentTo' | 'silent'>) {
     return this.client.sendMessage(this.config.chatId, {
       commentTo,
       message,
+      silent,
       parseMode: 'html',
     });
   }
@@ -73,6 +75,7 @@ export class TelegramService {
     const _message = await this.commentMessageToChannel({
       message,
       commentTo,
+      silent: true,
     });
 
     const updateProgressMessage = throttle(async (text) => {
