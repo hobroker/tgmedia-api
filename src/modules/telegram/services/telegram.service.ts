@@ -1,8 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
-import { TelegramClient } from 'telegram';
+import { Api, TelegramClient } from 'telegram';
 import { SendFileInterface } from 'telegram/client/uploads';
-import { SendMessageParams } from 'telegram/client/messages';
+import {
+  IterMessagesParams,
+  SendMessageParams,
+} from 'telegram/client/messages';
+import { head } from 'ramda';
 import { telegramConfig } from '../telegram.config';
 import { throttle } from '../../../util/throttle';
 import { noop } from '../../../util/noop';
@@ -17,6 +21,34 @@ export class TelegramService {
     private readonly telegramAuthService: TelegramAuthService,
   ) {
     this.client = telegramAuthService.client;
+  }
+
+  findChannelMessage({
+    search,
+  }: Pick<IterMessagesParams, 'search'>): Promise<Api.Message | null> {
+    return this.findChannelMessages({ search }).then((data) => data[0]);
+  }
+
+  findChannelMessages({
+    search,
+  }: Pick<IterMessagesParams, 'search'>): Promise<Api.Message[]> {
+    return this.client.getMessages(this.config.chatId, {
+      search,
+      filter: new Api.InputMessagesFilterPhotos(),
+    });
+  }
+
+  async upsertChannelMessage(
+    { search }: Pick<IterMessagesParams, 'search'>,
+    { caption, file }: Pick<SendFileInterface, 'caption' | 'file'>,
+  ) {
+    const message = await this.findChannelMessage({ search });
+
+    if (message) {
+      return message;
+    }
+
+    return this.sendPhotoToChannel({ caption, file });
   }
 
   async commentVideoToChannel({

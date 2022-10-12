@@ -7,7 +7,7 @@ import { Movie } from '../entities';
 import { IMovie } from '../../radarr';
 
 @Injectable()
-export class MessengerService {
+export class MessengerMovieService {
   private readonly logger = new Logger(this.constructor.name);
 
   constructor(

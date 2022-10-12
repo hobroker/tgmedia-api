@@ -3,8 +3,9 @@ import { ConfigModule } from '@nestjs/config';
 import { TelegramModule } from '../telegram';
 import { HandbrakeModule } from '../handbrake';
 import { RadarrModule } from '../radarr';
+import { SonarrModule } from '../sonarr';
 import { messengerConfig } from './messenger.config';
-import { MessengerService } from './services';
+import { MessengerMovieService, MessengerShowService } from './services';
 import { MessengerController } from './controllers';
 
 @Module({
@@ -13,8 +14,9 @@ import { MessengerController } from './controllers';
     TelegramModule,
     HandbrakeModule,
     RadarrModule,
+    SonarrModule,
   ],
-  providers: [MessengerService],
+  providers: [MessengerMovieService, MessengerShowService],
   controllers: [MessengerController],
 })
 export class MessengerModule {}
