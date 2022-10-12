@@ -36,14 +36,12 @@ export class SonarrService {
   }
 
   async getShowSeasons(seriesId: number): Promise<Record<string, IEpisode[]>> {
-    const { data: episodes } = await this.httpService.get('episode', {
-      params: { seriesId },
-    });
-    const { data: episodeFiles } = await this.httpService.get('episodeFile', {
-      params: { seriesId },
-    });
+    const [{ data: episodes }, { data: episodeFiles }] = await Promise.all([
+      this.httpService.get('episode', { params: { seriesId } }),
+      this.httpService.get('episodeFile', { params: { seriesId } }),
+    ]);
 
-    const episodeFileMap: Record<string, string | undefined> =
+    const episodeFileMap: Record<string, string> =
       groupEpisodeFiles(episodeFiles);
     const episodeMap: IEpisode[] = mapEpisodes(episodes).map((episode) => ({
       ...episode,
