@@ -29,4 +29,9 @@ export class MediaController {
   async getShow(@Param() { seriesId }: { seriesId: number }) {
     return this.sonarrService.get(seriesId);
   }
+
+  @Get('show/:seriesId/seasons')
+  async getShowSeasons(@Param() { seriesId }: { seriesId: number }) {
+    return this.sonarrService.getShowSeasons(seriesId);
+  }
 }
