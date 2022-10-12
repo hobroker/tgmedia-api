@@ -1,3 +1,10 @@
+## [1.3.2](https://github.com/hobroker/tgmedia-api/compare/v1.3.1...v1.3.2) (2022-10-12)
+
+
+### Bug Fixes
+
+* silence updating messages ([#10](https://github.com/hobroker/tgmedia-api/issues/10)) ([256bd73](https://github.com/hobroker/tgmedia-api/commit/256bd7332f5f2d3607a0573f856d7da2ae8fff75))
+
 ## [1.3.1](https://github.com/hobroker/tgmedia-api/compare/v1.3.0...v1.3.1) (2022-10-10)
 
 
