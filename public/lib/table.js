@@ -1,5 +1,5 @@
 class Table {
-  constructor(tabs) {
+  constructor() {
     this.table = document.getElementById('table');
     this.tbody = document.querySelector('tbody');
     this.tableLoading = document.getElementById('table-loading');
