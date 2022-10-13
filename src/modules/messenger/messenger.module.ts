@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TelegramModule } from '../telegram';
-import { HandbrakeModule } from '../handbrake';
 import { RadarrModule } from '../radarr';
 import { SonarrModule } from '../sonarr';
 import { messengerConfig } from './messenger.config';

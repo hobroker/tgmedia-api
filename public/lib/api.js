@@ -12,6 +12,11 @@ class API {
           .sort((a, b) => a.title.localeCompare(b.title)),
       );
   }
+
+  sendMovie(id) {
+    return fetch(`/v1/messenger/${id}`);
+  }
+
   getShows() {
     return fetch('/v1/media/shows')
       .then((response) => response.json())
@@ -26,7 +31,9 @@ class API {
       );
   }
 
-  sendMovie(id) {
-    return fetch(`/v1/messenger/${id}`);
+  getShowSeasons(showId) {
+    return fetch(`/v1/media/show/${showId}/seasons`).then((response) =>
+      response.json(),
+    );
   }
 }

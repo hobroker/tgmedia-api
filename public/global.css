@@ -9,3 +9,14 @@
 .w-192 {
   width: 192px;
 }
+
+.flex {
+  display: flex;
+}
+
+@media screen and (min-width: 769px) {
+  .modal-card,
+  .modal-content {
+    width: calc(100% - 136px);
+  }
+}

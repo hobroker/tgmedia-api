@@ -3,7 +3,6 @@ import { MessengerMovieService, MessengerShowService } from '../services';
 import { MESSENGER_MODULE_ID } from '../messenger.constants';
 import { RadarrService } from '../../radarr';
 import { SonarrService } from '../../sonarr';
-import { Show } from '../entities';
 
 @Controller(MESSENGER_MODULE_ID)
 export class MessengerController {
