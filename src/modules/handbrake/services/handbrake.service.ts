@@ -4,6 +4,12 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import { handbrakeConfig } from '../handbrake.config';
 
+export type HandbrakeConvertOptions = {
+  input: string;
+  outputFilename: string;
+  ext?: '.mp4';
+};
+
 @Injectable()
 export class HandbrakeService {
   private readonly logger = new Logger(this.constructor.name);
@@ -14,8 +20,7 @@ export class HandbrakeService {
   ) {}
 
   async convert(
-    input: string,
-    filename: string,
+    { input, outputFilename, ext = '.mp4' }: HandbrakeConvertOptions,
     callback?: (progress: string) => void,
   ) {
     this.logger.debug('input', input);
@@ -24,7 +29,10 @@ export class HandbrakeService {
       return input;
     }
 
-    const output = path.resolve(this.config.tmpFolder, filename);
+    const output = path.resolve(
+      this.config.tmpFolder,
+      `${outputFilename}${ext}`,
+    );
     const log = (data) => {
       const text = data.split('\n').find((item) => item.includes('Encoding'));
 

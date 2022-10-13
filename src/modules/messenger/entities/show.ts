@@ -1,8 +1,7 @@
-import { compose, concat, propEq, replace } from 'ramda';
+import { propEq } from 'ramda';
 import { CoverType } from '@jc21/radarr-api/lib/models/enums/CoverType';
 import { IShow } from '../../sonarr/interfaces';
-
-const toTag = compose(concat('#'), replace(/\s/g, ''));
+import { toTag } from '../utils/toTag';
 
 export class Show {
   private readonly show: IShow;

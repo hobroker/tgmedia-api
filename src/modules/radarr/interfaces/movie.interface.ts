@@ -1,6 +1,7 @@
 import { CoverType } from '../../media';
 
 export interface IMovie {
+  id: string;
   title: string;
   overview: string;
   youTubeTrailerId: string;

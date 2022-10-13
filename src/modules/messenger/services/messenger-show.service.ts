@@ -42,7 +42,10 @@ export class MessengerShowService {
       {
         commentTo: message.id,
       },
-      { file: episode.video },
+      {
+        input: episode.video,
+        outputFilename: episode.raw.fileId.toString(),
+      },
     );
 
     this.logger.debug('converting video done:', episode.toString());

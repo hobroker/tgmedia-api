@@ -9,8 +9,8 @@ import {
 import { telegramConfig } from '../telegram.config';
 import { throttle } from '../../../util/throttle';
 import { noop } from '../../../util/noop';
-import { Movie } from '../../messenger/entities';
 import { HandbrakeService } from '../../handbrake';
+import { HandbrakeConvertOptions } from '../../handbrake/services/handbrake.service';
 import { TelegramAuthService } from './telegram-auth.service';
 import { TelegramService } from './telegram.service';
 
@@ -73,9 +73,9 @@ export class TelegramHelperService {
 
   async sendConvertVideoProgress(
     { commentTo }: Pick<SendFileInterface, 'commentTo'>,
-    { file }: { file: string },
+    handbrakeConvertOptions: HandbrakeConvertOptions,
   ) {
-    this.logger.debug('encoding the video', file);
+    this.logger.debug('encoding the video', handbrakeConvertOptions.input);
     const [updateMessage, deleteMessage] =
       await this.createUpdatingCommentToChannel({
         commentTo,
@@ -87,7 +87,10 @@ export class TelegramHelperService {
       return updateMessage(progress);
     };
 
-    const video = await this.handbrakeService.convert(file, progressCallback);
+    const video = await this.handbrakeService.convert(
+      handbrakeConvertOptions,
+      progressCallback,
+    );
 
     await deleteMessage();
 

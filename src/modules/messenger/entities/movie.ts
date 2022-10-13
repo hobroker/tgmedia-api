@@ -1,8 +1,7 @@
-import { compose, concat, prop, propEq, replace } from 'ramda';
+import { compose, prop, propEq } from 'ramda';
 import { CoverType } from '@jc21/radarr-api/lib/models/enums/CoverType';
 import { IMovie } from '../../radarr';
-
-const toTag = compose(concat('#'), replace(/\s/g, ''));
+import { toTag } from '../utils/toTag';
 
 export class Movie {
   private readonly movie: IMovie;

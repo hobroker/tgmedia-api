@@ -30,7 +30,7 @@ export class MessengerMovieService {
     this.logger.debug('converting video:', movie.toString());
     const file = await this.telegramHelperService.sendConvertVideoProgress(
       { commentTo: message.id },
-      { file: movie.video },
+      { input: movie.video, outputFilename: movie.id },
     );
 
     this.logger.debug('converting video done:', movie.toString());
