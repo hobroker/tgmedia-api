@@ -24,6 +24,10 @@ export class Show {
     return `<b>${this.show.title}</b>`;
   }
 
+  get searchString() {
+    return `${this.show.title}\n\n`;
+  }
+
   get raw() {
     return this.show;
   }

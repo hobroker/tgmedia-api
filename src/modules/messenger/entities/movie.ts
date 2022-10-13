@@ -47,8 +47,4 @@ export class Movie {
   get video() {
     return this.overrideMediaPath || this.movie.movieFile.path;
   }
-
-  set video(value: string) {
-    this.movie.movieFile.path = value;
-  }
 }

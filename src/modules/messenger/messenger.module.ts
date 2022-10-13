@@ -12,7 +12,6 @@ import { MessengerController } from './controllers';
   imports: [
     ConfigModule.forFeature(messengerConfig),
     TelegramModule,
-    HandbrakeModule,
     RadarrModule,
     SonarrModule,
   ],

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { applySpec, compose, filter, groupBy, map, prop } from 'ramda';
+import { applySpec, compose, filter, map, prop } from 'ramda';
 import { HttpService } from '../../http';
 import { IEpisode, IShow } from '../interfaces';
 
@@ -35,7 +35,9 @@ export class SonarrService {
     return data;
   }
 
-  async getShowSeasons(seriesId: number): Promise<Record<string, IEpisode[]>> {
+  async getShowSeasons(
+    seriesId: number,
+  ): Promise<Record<string, Record<string, IEpisode>>> {
     const [{ data: episodes }, { data: episodeFiles }] = await Promise.all([
       this.httpService.get('episode', { params: { seriesId } }),
       this.httpService.get('episodeFile', { params: { seriesId } }),
@@ -43,11 +45,21 @@ export class SonarrService {
 
     const episodeFileMap: Record<string, string> =
       groupEpisodeFiles(episodeFiles);
-    const episodeMap: IEpisode[] = mapEpisodes(episodes).map((episode) => ({
-      ...episode,
-      path: episodeFileMap[episode.fileId] || null,
-    }));
 
-    return groupBy<IEpisode>(compose(String, prop('seasonNumber')), episodeMap);
+    return mapEpisodes(episodes)
+      .map((episode) => ({
+        ...episode,
+        path: episodeFileMap[episode.fileId] || null,
+      }))
+      .reduce(
+        (acc, episode) => ({
+          ...acc,
+          [episode.seasonNumber]: {
+            ...acc[episode.seasonNumber],
+            [episode.number]: episode,
+          },
+        }),
+        {},
+      );
   }
 }

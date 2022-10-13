@@ -38,10 +38,28 @@ export class MessengerController {
     return show;
   }
 
-  @Get('test')
-  async test() {
-    const show = new Show(await this.sonarrService.get(28));
+  @Get('show/:showId/season/:seasonNumber/episode/:episodeNumber')
+  async uploadShowEpisode(
+    @Param()
+    {
+      showId,
+      seasonNumber,
+      episodeNumber,
+    }: {
+      showId: number;
+      seasonNumber: number;
+      episodeNumber: number;
+    },
+  ) {
+    const [show, seasons] = await Promise.all([
+      this.sonarrService.get(showId),
+      this.sonarrService.getShowSeasons(showId),
+    ]);
 
-    return this.messengerShowService.findMessageWithTitle(show.raw.title);
+    const episode = seasons[seasonNumber][episodeNumber];
+
+    await this.messengerShowService.sendEpisodeToTelegram(show, episode);
+
+    return episode;
   }
 }

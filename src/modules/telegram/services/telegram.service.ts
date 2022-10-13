@@ -8,8 +8,6 @@ import {
 } from 'telegram/client/messages';
 import { head } from 'ramda';
 import { telegramConfig } from '../telegram.config';
-import { throttle } from '../../../util/throttle';
-import { noop } from '../../../util/noop';
 import { TelegramAuthService } from './telegram-auth.service';
 
 @Injectable()
@@ -26,7 +24,7 @@ export class TelegramService {
   findChannelMessage({
     search,
   }: Pick<IterMessagesParams, 'search'>): Promise<Api.Message | null> {
-    return this.findChannelMessages({ search }).then((data) => data[0]);
+    return this.findChannelMessages({ search }).then<Api.Message>(head);
   }
 
   findChannelMessages({
@@ -36,19 +34,6 @@ export class TelegramService {
       search,
       filter: new Api.InputMessagesFilterPhotos(),
     });
-  }
-
-  async upsertChannelMessage(
-    { search }: Pick<IterMessagesParams, 'search'>,
-    { caption, file }: Pick<SendFileInterface, 'caption' | 'file'>,
-  ) {
-    const message = await this.findChannelMessage({ search });
-
-    if (message) {
-      return message;
-    }
-
-    return this.sendPhotoToChannel({ caption, file });
   }
 
   async commentVideoToChannel({
@@ -96,34 +81,5 @@ export class TelegramService {
       silent,
       parseMode: 'html',
     });
-  }
-
-  async createUpdatingCommentToChannel({
-    message,
-    commentTo,
-  }: Pick<SendMessageParams, 'message' | 'commentTo'>): Promise<
-    [(text: string) => Promise<void>, () => Promise<void>]
-  > {
-    const { chatId, id } = await this.commentMessageToChannel({
-      message,
-      commentTo,
-      silent: true,
-    });
-
-    const updateProgressMessage = throttle(async (text) => {
-      await this.client
-        .editMessage(chatId, {
-          text,
-          parseMode: 'html',
-          message: id,
-        })
-        .catch(noop);
-    }, 1000);
-
-    const deleteProgressMessage = async () => {
-      await this.client.deleteMessages(chatId, [id], {});
-    };
-
-    return [updateProgressMessage, deleteProgressMessage];
   }
 }
