@@ -1,11 +1,16 @@
 class API {
-  getMovies() {
+  async getMovies() {
+    const publishedMovies = await fetch('/v1/messenger/published/movies').then(
+      (response) => response.json(),
+    );
+
     return fetch('/v1/media/movies')
       .then((response) => response.json())
       .then((response) =>
         response
           .map(({ images, ...movie }) => ({
             ...movie,
+            isPublished: publishedMovies.includes(movie.title),
             poster: images.find(({ coverType }) => coverType === 'poster')
               ?.remoteUrl,
           }))
@@ -14,7 +19,7 @@ class API {
   }
 
   sendMovie(id) {
-    return fetch(`/v1/messenger/${id}`);
+    return fetch(`/v1/messenger/movie/${id}`);
   }
 
   sendEpisode({ showId, episodeNumber, seasonNumber }) {
