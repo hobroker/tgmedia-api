@@ -5,7 +5,7 @@ class Table {
     this.tableLoading = document.getElementById('table-loading');
     this.api = new API();
     this.showModal = new ShowModal();
-    this.showModal.open(55);
+    // this.showModal.open(14);
   }
 
   show() {

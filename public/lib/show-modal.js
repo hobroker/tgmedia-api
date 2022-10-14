@@ -42,24 +42,33 @@ class ShowModal {
           .map(
             ([seasonNumber, episodes]) => `
             <div class="column is-one-quarter-desktop is-one-third-tablet">
-              <h5 class="title is-5 flex">
+              <h5 class="title is-5 flex mb-2">
                 Season ${seasonNumber}
                 <button class="button is-small is-primary ml-auto">
                   Send full season
                 </button>
               </h5>
-              <div>
+              <table class="table is-compact is-bordered is-striped is-narrow is-hoverable is-fullwidth">
                 ${Object.entries(episodes)
                   .map(
                     ([episodeNumber, episode]) => `
-                      <button class="button is-small is-fullwidth mb-1 is-justify-content-left is-multiline p-1" title="${episode.title}" data-episode-number="${episodeNumber}" data-season-number="${seasonNumber}">
-                        <span class="tag is-black mr-1 is-small">${episodeNumber}</span>
-                        ${episode.title}
-                      </button>
+                      <tr>
+                        <td class="has-text-centered w-24">
+                          <p class="content is-small">${episodeNumber}</p>
+                        </td>
+                        <td>
+                          <p class="content is-small">${episode.title}</p>
+                        </td>
+                        <td class="has-text-right w-60">
+                          <button class="button is-small" data-episode-number="${episodeNumber}" data-season-number="${seasonNumber}">
+                            Send
+                          </button>
+                        </td>
+                      </tr>
                     `,
                   )
                   .join('')}
-              </div>
+              </table>
             </div>
           `,
           )
