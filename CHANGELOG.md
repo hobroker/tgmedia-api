@@ -1,3 +1,10 @@
+# [2.2.0](https://github.com/hobroker/tgmedia-api/compare/v2.1.0...v2.2.0) (2022-10-14)
+
+
+### Features
+
+* show movie size in UI ([#13](https://github.com/hobroker/tgmedia-api/issues/13)) ([fc5ebaf](https://github.com/hobroker/tgmedia-api/commit/fc5ebaf1a9aadda8731798d2c9cca968f6cebf4b))
+
 # [2.1.0](https://github.com/hobroker/tgmedia-api/compare/v2.0.1...v2.1.0) (2022-10-14)
 
 
