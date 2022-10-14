@@ -1,3 +1,10 @@
+# [2.1.0](https://github.com/hobroker/tgmedia-api/compare/v2.0.1...v2.1.0) (2022-10-14)
+
+
+### Features
+
+* prevent multiple publish from UI ([#12](https://github.com/hobroker/tgmedia-api/issues/12)) ([bbd1c91](https://github.com/hobroker/tgmedia-api/commit/bbd1c91b8b1698019d58b36ef6ba5ed1f9af9bf5))
+
 ## [2.0.1](https://github.com/hobroker/tgmedia-api/compare/v2.0.0...v2.0.1) (2022-10-14)
 
 

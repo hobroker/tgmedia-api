@@ -4,7 +4,7 @@ description: Telegram Media API chart
 icon: https://
 type: application
 version: 0.1.2
-appVersion: '2.0.1'
+appVersion: '2.1.0'
 dependencies:
   - name: base
     version: 1.0.0
