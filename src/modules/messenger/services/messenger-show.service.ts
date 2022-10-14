@@ -1,4 +1,3 @@
-import * as path from 'path';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import { TelegramHelperService, TelegramService } from '../../telegram';
