@@ -1,5 +1,6 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
+import { compose, head, match, prop } from 'ramda';
 import { TelegramHelperService, TelegramService } from '../../telegram';
 import { messengerConfig } from '../messenger.config';
 import { Movie } from '../entities';
@@ -42,5 +43,13 @@ export class MessengerMovieService {
       caption: movie.caption,
     });
     this.logger.debug('sending video done:', movie.toString());
+  }
+
+  async getPublishedMovies() {
+    const messages = await this.telegramService.findChannelMessages({
+      search: '#Movie',
+    });
+
+    return messages.map(compose(head, match(/^(.*)$/m), prop('message')));
   }
 }

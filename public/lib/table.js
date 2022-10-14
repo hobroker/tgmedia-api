@@ -38,8 +38,8 @@ class Table {
     const movies = await this.api.getMovies();
 
     this.tbody.innerHTML = movies
-      .map(({ title, overview, poster, id, movieFile }) => {
-        const disabled = movieFile ? '' : 'disabled';
+      .map(({ title, overview, poster, id, movieFile, isPublished }) => {
+        const disabled = !isPublished && movieFile ? '' : 'disabled';
 
         return `<tr>
             <td class="w-100">
@@ -53,7 +53,7 @@ class Table {
             </td>
             <td class="w-100 has-text-centered">
               <button class="button is-primary is-small" data-id="${id}" ${disabled}>
-                ${disabled ? 'No file' : 'Send'}
+                ${isPublished ? 'Published' : disabled ? 'No file' : 'Send'}
               </button>
             </td>
           </tr>`;

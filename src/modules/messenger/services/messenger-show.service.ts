@@ -22,7 +22,7 @@ export class MessengerShowService {
     const { overrideMediaPath } = this.config;
     const show = new Show(rawShow, { overrideMediaPath });
 
-    await this.getChannelMessage(show);
+    await this.upsertChannelMessage(show);
   }
 
   async sendEpisodeToTelegram(rawShow: IShow, rawEpisode: IEpisode) {
@@ -31,7 +31,7 @@ export class MessengerShowService {
     const episode = new Episode(rawEpisode, show, { overrideMediaPath });
 
     this.logger.debug('finding main message in the channel:', show.toString());
-    const message = await this.getChannelMessage(show);
+    const message = await this.upsertChannelMessage(show);
 
     this.logger.debug('converting video:', episode.rawTitle);
     const file = await this.telegramHelperService.sendConvertVideoProgress(
@@ -54,7 +54,7 @@ export class MessengerShowService {
     await this.handbrakeService.removeFileIfNeeded({ outputFilePath: file });
   }
 
-  private getChannelMessage(show: Show) {
+  private upsertChannelMessage(show: Show) {
     return this.telegramHelperService.upsertChannelMessage(
       { search: show.searchString },
       { caption: show.caption, file: show.image },
