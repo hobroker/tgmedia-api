@@ -54,13 +54,13 @@ class ShowModal {
                     ([episodeNumber, episode]) => `
                       <tr>
                         <td class="has-text-centered w-24">
-                          <p class="content is-small">${episodeNumber}</p>
+                          <code class="tag is-black w-24">${episodeNumber}</code>
                         </td>
                         <td>
                           <p class="content is-small">${episode.title}</p>
                         </td>
                         <td class="has-text-right w-60">
-                          <button class="button is-small" data-episode-number="${episodeNumber}" data-season-number="${seasonNumber}">
+                          <button class="button is-small is-primary" data-episode-number="${episodeNumber}" data-season-number="${seasonNumber}">
                             Send
                           </button>
                         </td>

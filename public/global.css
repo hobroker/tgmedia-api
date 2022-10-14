@@ -22,13 +22,6 @@
   display: flex;
 }
 
-.button.is-multiline {
-  white-space: normal;
-  line-height: 1.3;
-  text-align: left;
-  height: 3em;
-}
-
 .table.is-compact td {
   padding: 4px;
 }
