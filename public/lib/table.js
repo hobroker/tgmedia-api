@@ -38,10 +38,12 @@ class Table {
     const movies = await this.api.getMovies();
 
     this.tbody.innerHTML = movies
-      .map(({ title, overview, poster, id, movieFile, isPublished }) => {
+      .map(({ title, overview, poster, id, movieFile, isPublished, size }) => {
         const disabled = !isPublished && movieFile ? '' : 'disabled';
 
-        return `<tr>
+        return `<tr class="${!movieFile ? 'has-background-danger-light' : ''} ${
+          isPublished ? 'has-background-primary-light' : ''
+        }">
             <td class="w-100">
               <img src="${poster}" alt="${title}" class="image w-100" />
             </td>
@@ -49,7 +51,10 @@ class Table {
               <p class="title is-6">${title}</p>
             </td>
             <td>
-              <p class="subtitle is-6">${overview}</p>
+              <p class="subtitle is-6">
+                ${overview}
+                ${size ? `<b>(${size})</b>` : ''}
+              </p>
             </td>
             <td class="w-100 has-text-centered">
               <button class="button is-primary is-small" data-id="${id}" ${disabled}>

@@ -10,6 +10,7 @@ class API {
         response
           .map(({ images, ...movie }) => ({
             ...movie,
+            size: toHumanSize(movie?.movieFile?.size),
             isPublished: publishedMovies.includes(movie.title),
             poster: images.find(({ coverType }) => coverType === 'poster')
               ?.remoteUrl,
@@ -47,4 +48,14 @@ class API {
       response.json(),
     );
   }
+}
+
+function toHumanSize(bytes) {
+  if (!bytes) {
+    return 0;
+  }
+  const units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(1024));
+
+  return `${(bytes / Math.pow(1024, i)).toFixed(2)} ${units[i]}`;
 }
