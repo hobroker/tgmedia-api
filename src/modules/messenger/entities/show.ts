@@ -24,7 +24,7 @@ export class Show {
   }
 
   get searchString() {
-    return `${this.show.title}\n\n`;
+    return `${this.show.title}\n`;
   }
 
   get raw() {
