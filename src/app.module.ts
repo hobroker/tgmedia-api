@@ -5,6 +5,7 @@ import { ConfigModule } from '@nestjs/config';
 import { appConfig } from './app.config';
 import { HealthModule } from './modules/health';
 import { MessengerModule } from './modules/messenger';
+import { MediaModule } from './modules/media';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { MessengerModule } from './modules/messenger';
     }),
     ConfigModule.forFeature(appConfig),
     HealthModule,
+    MediaModule,
     MessengerModule,
   ],
 })

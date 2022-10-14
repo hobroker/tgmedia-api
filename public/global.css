@@ -2,10 +2,37 @@
   object-fit: contain;
 }
 
+.w-24 {
+  width: 24px;
+}
+
+.w-60 {
+  width: 60px;
+}
+
 .w-100 {
   width: 100px;
 }
 
 .w-192 {
   width: 192px;
+}
+
+.flex {
+  display: flex;
+}
+
+.table.is-compact td {
+  padding: 4px;
+}
+
+.table.is-compact button {
+  height: 24px;
+}
+
+@media screen and (min-width: 769px) {
+  .modal-card,
+  .modal-content {
+    width: calc(100% - 136px);
+  }
 }

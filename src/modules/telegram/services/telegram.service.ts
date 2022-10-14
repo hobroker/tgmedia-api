@@ -1,11 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
-import { TelegramClient } from 'telegram';
+import { Api, TelegramClient } from 'telegram';
 import { SendFileInterface } from 'telegram/client/uploads';
-import { SendMessageParams } from 'telegram/client/messages';
+import {
+  IterMessagesParams,
+  SendMessageParams,
+} from 'telegram/client/messages';
+import { head } from 'ramda';
 import { telegramConfig } from '../telegram.config';
-import { throttle } from '../../../util/throttle';
-import { noop } from '../../../util/noop';
 import { TelegramAuthService } from './telegram-auth.service';
 
 @Injectable()
@@ -17,6 +19,21 @@ export class TelegramService {
     private readonly telegramAuthService: TelegramAuthService,
   ) {
     this.client = telegramAuthService.client;
+  }
+
+  findChannelMessage({
+    search,
+  }: Pick<IterMessagesParams, 'search'>): Promise<Api.Message | null> {
+    return this.findChannelMessages({ search }).then<Api.Message>(head);
+  }
+
+  findChannelMessages({
+    search,
+  }: Pick<IterMessagesParams, 'search'>): Promise<Api.Message[]> {
+    return this.client.getMessages(this.config.chatId, {
+      search,
+      filter: new Api.InputMessagesFilterPhotos(),
+    });
   }
 
   async commentVideoToChannel({
@@ -64,34 +81,5 @@ export class TelegramService {
       silent,
       parseMode: 'html',
     });
-  }
-
-  async createUpdatingCommentToChannel({
-    message,
-    commentTo,
-  }: Pick<SendMessageParams, 'message' | 'commentTo'>): Promise<
-    [(text: string) => Promise<void>, () => Promise<void>]
-  > {
-    const _message = await this.commentMessageToChannel({
-      message,
-      commentTo,
-      silent: true,
-    });
-
-    const updateProgressMessage = throttle(async (text) => {
-      await this.client
-        .editMessage(_message.chatId, {
-          text,
-          parseMode: 'html',
-          message: _message.id,
-        })
-        .catch(noop);
-    }, 1000);
-
-    const deleteProgressMessage = async () => {
-      await this.client.deleteMessages(_message.chatId, [_message.id], {});
-    };
-
-    return [updateProgressMessage, deleteProgressMessage];
   }
 }

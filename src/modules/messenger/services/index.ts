@@ -1,1 +1,2 @@
-export { MessengerService } from './messenger.service';
+export { MessengerMovieService } from './messenger-movie.service';
+export { MessengerShowService } from './messenger-show.service';

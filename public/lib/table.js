@@ -4,6 +4,8 @@ class Table {
     this.tbody = document.querySelector('tbody');
     this.tableLoading = document.getElementById('table-loading');
     this.api = new API();
+    this.showModal = new ShowModal();
+    // this.showModal.open(14);
   }
 
   show() {
@@ -11,7 +13,12 @@ class Table {
     this.tableLoading.classList.add('is-hidden');
   }
 
-  addActions() {
+  hide() {
+    this.table.classList.add('is-hidden');
+    this.tableLoading.classList.remove('is-hidden');
+  }
+
+  addMovieActions() {
     this.tbody.querySelectorAll('button').forEach((button) => {
       const { id } = button.dataset;
 
@@ -26,7 +33,8 @@ class Table {
     });
   }
 
-  async render() {
+  async renderMovies() {
+    this.hide();
     const movies = await this.api.getMovies();
 
     this.tbody.innerHTML = movies
@@ -52,12 +60,48 @@ class Table {
       })
       .join('');
 
-    this.addActions();
+    this.addMovieActions();
+
+    this.show();
+  }
+
+  addShowActions() {
+    this.tbody.querySelectorAll('button').forEach((button) => {
+      const { id } = button.dataset;
+
+      button.addEventListener('click', () => {
+        this.showModal.open(id);
+      });
+    });
+  }
+
+  async renderShows() {
+    this.hide();
+    const shows = await this.api.getShows();
+
+    this.tbody.innerHTML = shows
+      .map(({ title, overview, poster, id }) => {
+        return `<tr>
+            <td class="w-100">
+              <img src="${poster}" alt="${title}" class="image w-100" />
+            </td>
+            <td class="w-192">
+              <p class="title is-6">${title}</p>
+            </td>
+            <td>
+              <p class="subtitle is-6">${overview}</p>
+            </td>
+            <td class="w-100 has-text-centered">
+              <button class="button is-primary is-small" data-id="${id}">
+                Open show
+              </button>
+            </td>
+          </tr>`;
+      })
+      .join('');
+
+    this.addShowActions();
 
     this.show();
   }
 }
-
-const $table = new Table();
-
-$table.render();
