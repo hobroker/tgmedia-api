@@ -17,6 +17,12 @@ class API {
     return fetch(`/v1/messenger/${id}`);
   }
 
+  sendEpisode({ showId, episodeNumber, seasonNumber }) {
+    return fetch(
+      `/v1/messenger/show/${showId}/season/${seasonNumber}/episode/${episodeNumber}`,
+    );
+  }
+
   getShows() {
     return fetch('/v1/media/shows')
       .then((response) => response.json())

@@ -40,7 +40,7 @@ export class Show {
     return [
       this.title,
       this.show.overview,
-      [this.show.genres.map(toTag).join(' '), toTag('Movie')].join('\n'),
+      [this.show.genres.map(toTag).join(' '), toTag('TVSeries')].join('\n'),
     ].join('\n\n');
   }
 }

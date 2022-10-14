@@ -5,6 +5,7 @@ class Table {
     this.tableLoading = document.getElementById('table-loading');
     this.api = new API();
     this.showModal = new ShowModal();
+    this.showModal.open(55);
   }
 
   show() {
@@ -69,14 +70,7 @@ class Table {
       const { id } = button.dataset;
 
       button.addEventListener('click', () => {
-        console.log('id', id);
         this.showModal.open(id);
-        // button.disabled = true;
-        // button.innerText = 'Sending...';
-        //
-        // return this.api.sendMovie(id).catch(() => {
-        //   button.disabled = false;
-        // });
       });
     });
   }
