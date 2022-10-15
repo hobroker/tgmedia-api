@@ -2,7 +2,6 @@ import { EventEmitter } from 'events';
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { tail } from 'ramda';
 import { QueueType } from '../messenger.constants';
-import { delay } from '../../../util/promise';
 import { MessengerMovieService } from './messenger-movie.service';
 import { MessengerShowService } from './messenger-show.service';
 
@@ -21,15 +20,13 @@ export class MessengerQueueService implements OnModuleInit {
     this.handleEpisodeEvent = this.handleEpisodeEvent.bind(this);
   }
 
-  add({ type, args }: QueueItem) {
+  add({ type, args }: QueueItem): number {
     this.logger.log('ADD to queue', type, args);
-    this.queue = [...this.queue, { type, args }];
+    this.queue.push({ type, args });
 
-    if (this.isWorking) {
-      return;
+    if (!this.isWorking) {
+      this.next();
     }
-
-    this.next();
 
     return this.queue.length;
   }
@@ -45,40 +42,30 @@ export class MessengerQueueService implements OnModuleInit {
 
     const [{ type, args }] = this.queue;
 
-    this.queue = tail(this.queue);
+    this.queue.shift();
 
     this.emitter.emit(type, args);
   }
 
-  private async handleMovieEvent({ movieId }: QueueMovieArgs) {
-    this.logger.log('START executing', QueueType.Movie, { movieId });
+  private async handleMovieEvent(args: QueueMovieArgs) {
+    this.logger.log('START executing', QueueType.Movie, args);
 
     await this.messengerMovieService
-      .send({ movieId })
+      .send(args)
       .catch(this.logger.error.bind(this.logger));
 
-    this.logger.log('DONE', QueueType.Movie, { movieId });
+    this.logger.log('DONE', QueueType.Movie, args);
     this.next();
   }
 
-  private async handleEpisodeEvent({
-    showId,
-    episodeNumber,
-    seasonNumber,
-  }: QueueEpisodeArgs) {
-    this.logger.log('EXECUTING', QueueType.Episode, {
-      showId,
-      episodeNumber,
-      seasonNumber,
-    });
+  private async handleEpisodeEvent(args: QueueEpisodeArgs) {
+    this.logger.log('EXECUTING', QueueType.Episode, args);
 
-    await delay(5000);
+    await this.messengerShowService
+      .sendEpisode(args)
+      .catch(this.logger.error.bind(this.logger));
 
-    this.logger.log('DONE', QueueType.Episode, {
-      showId,
-      episodeNumber,
-      seasonNumber,
-    });
+    this.logger.log('DONE', QueueType.Episode, args);
     this.next();
   }
 

@@ -22,18 +22,20 @@ export class MessengerController {
 
   @Get('movie/:movieId')
   async uploadMovie(@Param() { movieId }: { movieId: number }) {
-    return this.messengerQueueService.add({
+    const queue = this.messengerQueueService.add({
       type: QueueType.Movie,
       args: { movieId },
     });
+
+    return { queue };
   }
 
   @Get('show/:showId')
   async uploadShow(@Param() { showId }: { showId: number }) {
     const show = await this.sonarrService.get(showId);
 
-    this.messengerShowService
-      .sendMainMessageToTelegram(show)
+    await this.messengerShowService
+      .sendMainMessage(show)
       .catch(this.logger.error.bind(this.logger));
 
     return show;
@@ -52,16 +54,12 @@ export class MessengerController {
       episodeNumber: number;
     },
   ) {
-    const [show, seasons] = await Promise.all([
-      this.sonarrService.get(showId),
-      this.sonarrService.getShowSeasons(showId),
-    ]);
+    const queue = this.messengerQueueService.add({
+      type: QueueType.Episode,
+      args: { showId, episodeNumber, seasonNumber },
+    });
 
-    const episode = seasons[seasonNumber][episodeNumber];
-
-    await this.messengerShowService.sendEpisodeToTelegram(show, episode);
-
-    return episode;
+    return { queue };
   }
 
   @Get('published/movies')

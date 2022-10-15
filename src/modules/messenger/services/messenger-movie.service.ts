@@ -49,7 +49,7 @@ export class MessengerMovieService {
 
   async getPublishedMovies() {
     const messages = await this.telegramService.findChannelMessages({
-      search: '#Movie',
+      search: Movie.IdentityTag,
     });
 
     return messages.map(compose(head, match(/^(.*)$/m), prop('message')));

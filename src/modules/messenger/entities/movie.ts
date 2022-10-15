@@ -46,4 +46,6 @@ export class Movie {
   get video() {
     return this.overrideMediaPath || this.movie.movieFile.path;
   }
+
+  static IdentityTag = '#Movie';
 }
