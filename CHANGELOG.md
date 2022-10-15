@@ -1,3 +1,10 @@
+# [2.3.0](https://github.com/hobroker/tgmedia-api/compare/v2.2.0...v2.3.0) (2022-10-15)
+
+
+### Features
+
+* choose English subtitles/audio ([#14](https://github.com/hobroker/tgmedia-api/issues/14)) ([0b7cf70](https://github.com/hobroker/tgmedia-api/commit/0b7cf70673ff1112166ce10892cee646e71845ae))
+
 # [2.2.0](https://github.com/hobroker/tgmedia-api/compare/v2.1.0...v2.2.0) (2022-10-14)
 
 
