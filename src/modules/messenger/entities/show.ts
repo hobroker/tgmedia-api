@@ -15,7 +15,7 @@ export class Show {
     this.overrideMediaPath = overrideMediaPath;
   }
 
-  toString() {
+  get rawTitle() {
     return this.show.title;
   }
 

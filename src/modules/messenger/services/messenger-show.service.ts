@@ -54,7 +54,7 @@ export class MessengerShowService {
   }
 
   private upsertChannelMessage(show: Show) {
-    this.logger.debug('finding main message in the channel:', show.toString());
+    this.logger.debug('finding main message in the channel:', show.rawTitle);
 
     return this.telegramHelperService.upsertChannelMessage(
       { search: show.searchString },

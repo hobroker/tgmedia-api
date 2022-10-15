@@ -15,7 +15,7 @@ export class Movie {
     this.overrideMediaPath = overrideMediaPath;
   }
 
-  toString() {
+  get rawTitle() {
     return this.movie.title;
   }
 

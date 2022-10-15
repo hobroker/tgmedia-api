@@ -50,7 +50,7 @@ export class TelegramHelperService {
     const [updateMessage, deleteMessage] =
       await this.createUpdatingCommentToChannel({
         commentTo,
-        message: 'uploading the video...',
+        message: `uploading ${caption}...`,
       });
 
     const progressCallback = (progress: number) => {

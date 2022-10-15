@@ -6,7 +6,6 @@ import { appConfig } from './app.config';
 import { HealthModule } from './modules/health';
 import { MessengerModule } from './modules/messenger';
 import { MediaModule } from './modules/media';
-import { QueueModule } from './modules/queue';
 
 @Module({
   imports: [
@@ -19,7 +18,6 @@ import { QueueModule } from './modules/queue';
     ConfigModule.forFeature(appConfig),
     HealthModule,
     MediaModule,
-    QueueModule,
     MessengerModule,
   ],
 })

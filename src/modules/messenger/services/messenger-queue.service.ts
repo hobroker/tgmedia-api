@@ -1,25 +1,21 @@
 import { EventEmitter } from 'events';
-import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import { ConfigType } from '@nestjs/config';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { tail } from 'ramda';
-import { queueConfig } from '../queue.config';
-import type { QueueEpisodeArgs, QueueMovieArgs } from '../queue.types';
-import { QueueType } from '../queue.constants';
+import { QueueType } from '../messenger.constants';
 import { delay } from '../../../util/promise';
-
-type QueueItem = { type: QueueType; args: QueueMovieArgs | QueueEpisodeArgs };
+import { MessengerMovieService } from './messenger-movie.service';
+import { MessengerShowService } from './messenger-show.service';
 
 @Injectable()
-export class QueueService implements OnModuleInit {
+export class MessengerQueueService implements OnModuleInit {
   private readonly logger = new Logger(this.constructor.name);
+  private emitter = new EventEmitter();
   private queue: QueueItem[] = [];
   private isWorking = false;
 
-  private emitter = new EventEmitter();
-
   constructor(
-    @Inject(queueConfig.KEY)
-    private config: ConfigType<typeof queueConfig>,
+    private readonly messengerMovieService: MessengerMovieService,
+    private readonly messengerShowService: MessengerShowService,
   ) {
     this.handleMovieEvent = this.handleMovieEvent.bind(this);
     this.handleEpisodeEvent = this.handleEpisodeEvent.bind(this);
@@ -57,9 +53,9 @@ export class QueueService implements OnModuleInit {
   private async handleMovieEvent({ movieId }: QueueMovieArgs) {
     this.logger.log('START executing', QueueType.Movie, { movieId });
 
-    // await this.messengerMovieService
-    //   .sendToTelegram(movie)
-    //   .catch(this.logger.error.bind(this.logger));
+    await this.messengerMovieService
+      .send({ movieId })
+      .catch(this.logger.error.bind(this.logger));
 
     this.logger.log('DONE', QueueType.Movie, { movieId });
     this.next();
@@ -91,3 +87,13 @@ export class QueueService implements OnModuleInit {
     this.emitter.on(QueueType.Episode, this.handleEpisodeEvent);
   }
 }
+
+type QueueMovieArgs = {
+  movieId: number;
+};
+type QueueEpisodeArgs = {
+  showId: number;
+  seasonNumber: number;
+  episodeNumber: number;
+};
+type QueueItem = { type: QueueType; args: QueueMovieArgs | QueueEpisodeArgs };

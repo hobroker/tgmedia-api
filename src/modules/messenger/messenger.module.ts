@@ -4,9 +4,12 @@ import { TelegramModule } from '../telegram';
 import { RadarrModule } from '../radarr';
 import { SonarrModule } from '../sonarr';
 import { HandbrakeModule } from '../handbrake';
-import { QueueModule } from '../queue';
 import { messengerConfig } from './messenger.config';
-import { MessengerMovieService, MessengerShowService } from './services';
+import {
+  MessengerMovieService,
+  MessengerQueueService,
+  MessengerShowService,
+} from './services';
 import { MessengerController } from './controllers';
 
 @Module({
@@ -16,9 +19,12 @@ import { MessengerController } from './controllers';
     RadarrModule,
     SonarrModule,
     HandbrakeModule,
-    QueueModule,
   ],
-  providers: [MessengerMovieService, MessengerShowService],
+  providers: [
+    MessengerMovieService,
+    MessengerShowService,
+    MessengerQueueService,
+  ],
   controllers: [MessengerController],
 })
 export class MessengerModule {}
