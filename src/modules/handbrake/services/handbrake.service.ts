@@ -61,6 +61,7 @@ export class HandbrakeService {
     const subtitleArgs = subtitleExists
       ? ['--srt-file', subtitleFile, '--srt-burn']
       : ['--subtitle-lang-list', 'eng', '--subtitle-burned'];
+    const restArgs = this.config.handbrakeArgs.split(' ');
 
     return new Promise<string>((resolve, reject) => {
       const child = execFile(this.config.handbrakePath, [
@@ -70,6 +71,7 @@ export class HandbrakeService {
         output,
         '--preset',
         this.config.preset,
+        ...restArgs,
         ...audioArgs,
         ...subtitleArgs,
       ]);
