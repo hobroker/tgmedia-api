@@ -5,4 +5,5 @@ export const telegramConfig = registerAs(TELEGRAM_MODULE_ID, () => ({
   apiId: parseInt(process.env.TELEGRAM_APP_API_ID, 10),
   apiHash: process.env.TELEGRAM_APP_API_HASH,
   chatId: parseInt(process.env.TELEGRAM_CHAT_ID, 10),
+  updateInterval: parseInt(process.env.TELEGRAM_UPDATE_INTERVAL, 10),
 }));

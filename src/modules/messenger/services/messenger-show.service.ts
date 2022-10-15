@@ -30,7 +30,6 @@ export class MessengerShowService {
     const show = new Show(rawShow, { overrideMediaPath });
     const episode = new Episode(rawEpisode, show, { overrideMediaPath });
 
-    this.logger.debug('finding main message in the channel:', show.toString());
     const message = await this.upsertChannelMessage(show);
 
     this.logger.debug('converting video:', episode.rawTitle);
@@ -55,6 +54,8 @@ export class MessengerShowService {
   }
 
   private upsertChannelMessage(show: Show) {
+    this.logger.debug('finding main message in the channel:', show.toString());
+
     return this.telegramHelperService.upsertChannelMessage(
       { search: show.searchString },
       { caption: show.caption, file: show.image },

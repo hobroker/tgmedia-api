@@ -54,7 +54,7 @@ export class TelegramHelperService {
       });
 
     const progressCallback = (progress: number) => {
-      const text = `uploading the video... ${progress}%`;
+      const text = `uploading ${caption}... ${progress}%`;
 
       this.logger.debug(text);
 
@@ -116,7 +116,7 @@ export class TelegramHelperService {
           message: id,
         })
         .catch(noop);
-    }, 1000);
+    }, this.config.updateInterval);
 
     const deleteProgressMessage = async () => {
       await this.client.deleteMessages(chatId, [id], {});
