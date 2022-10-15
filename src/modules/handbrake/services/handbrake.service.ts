@@ -3,7 +3,10 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
+import { replace } from 'ramda';
 import { handbrakeConfig } from '../handbrake.config';
+
+const inputToSubtitle = replace(/\.[^.]*$/, '.en.srt');
 
 export type HandbrakeConvertOptions = {
   input: string;
@@ -47,7 +50,17 @@ export class HandbrakeService {
       callback?.(text);
     };
 
+    const subtitleFile = inputToSubtitle(input);
+    const subtitleExists = await this.fileExists(subtitleFile);
+
+    this.logger.debug('subtitle exists:', subtitleFile, subtitleExists);
+
     this.logger.debug('output', output);
+
+    const audioArgs = ['--audio-lang-list', 'eng'];
+    const subtitleArgs = subtitleExists
+      ? ['--srt-file', subtitleFile, '--srt-burn']
+      : ['--subtitle-lang-list', 'eng', '--subtitle-burned'];
 
     return new Promise<string>((resolve, reject) => {
       const child = execFile(this.config.handbrakePath, [
@@ -57,11 +70,8 @@ export class HandbrakeService {
         output,
         '--preset',
         this.config.preset,
-        '--audio-lang-list',
-        'eng',
-        '--subtitle-lang-list',
-        'eng',
-        '--subtitle-burned',
+        ...audioArgs,
+        ...subtitleArgs,
       ]);
 
       child.stdout.setEncoding('utf8');
@@ -94,7 +104,7 @@ export class HandbrakeService {
       return;
     }
 
-    this.logger.error('removing file', outputFilePath);
+    this.logger.debug('removing file', outputFilePath);
 
     return new Promise((resolve) => {
       fs.rm(outputFilePath, (err) => {
@@ -104,7 +114,7 @@ export class HandbrakeService {
           return resolve(false);
         }
 
-        this.logger.error('removed file', outputFilePath);
+        this.logger.debug('removed file', outputFilePath);
         resolve(true);
       });
     });
