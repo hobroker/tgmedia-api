@@ -4,6 +4,7 @@ import { TelegramModule } from '../telegram';
 import { RadarrModule } from '../radarr';
 import { SonarrModule } from '../sonarr';
 import { HandbrakeModule } from '../handbrake';
+import { QueueModule } from '../queue';
 import { messengerConfig } from './messenger.config';
 import { MessengerMovieService, MessengerShowService } from './services';
 import { MessengerController } from './controllers';
@@ -15,6 +16,7 @@ import { MessengerController } from './controllers';
     RadarrModule,
     SonarrModule,
     HandbrakeModule,
+    QueueModule,
   ],
   providers: [MessengerMovieService, MessengerShowService],
   controllers: [MessengerController],
