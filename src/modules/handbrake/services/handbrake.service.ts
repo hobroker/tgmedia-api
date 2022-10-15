@@ -59,6 +59,9 @@ export class HandbrakeService {
         this.config.preset,
         '--audio-lang-list',
         'eng',
+        '--subtitle-lang-list',
+        'eng',
+        '--subtitle-burned',
       ]);
 
       child.stdout.setEncoding('utf8');
