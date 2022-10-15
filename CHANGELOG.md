@@ -1,3 +1,10 @@
+# [2.4.0](https://github.com/hobroker/tgmedia-api/compare/v2.3.0...v2.4.0) (2022-10-15)
+
+
+### Features
+
+* config telegram updating message interval ([#15](https://github.com/hobroker/tgmedia-api/issues/15)) ([05f89ab](https://github.com/hobroker/tgmedia-api/commit/05f89abceddd5313289ae1102e5b10b5f572d9f2))
+
 # [2.3.0](https://github.com/hobroker/tgmedia-api/compare/v2.2.0...v2.3.0) (2022-10-15)
 
 
