@@ -1,4 +1,4 @@
-import { spawn } from 'child_process';
+import { execFile } from 'child_process';
 import * as path from 'path';
 import * as fs from 'fs';
 import { Inject, Injectable, Logger } from '@nestjs/common';
@@ -49,14 +49,16 @@ export class HandbrakeService {
 
     this.logger.debug('output', output);
 
-    return new Promise<string>((resolve) => {
-      const child = spawn('HandBrakeCLI', [
+    return new Promise<string>((resolve, reject) => {
+      const child = execFile(this.config.handbrakePath, [
         '-i',
         input,
         '-o',
         output,
         '--preset',
         this.config.preset,
+        '--audio-lang-list',
+        'eng',
       ]);
 
       child.stdout.setEncoding('utf8');
@@ -67,7 +69,12 @@ export class HandbrakeService {
 
       child.on('close', (code) => {
         this.logger.debug(`exit with: ${code}`);
-        resolve(output);
+
+        if (code === 0) {
+          resolve(output);
+        } else {
+          reject(code);
+        }
       });
     });
   }
