@@ -6,8 +6,6 @@ import { ConfigType } from '@nestjs/config';
 import { replace } from 'ramda';
 import { handbrakeConfig } from '../handbrake.config';
 
-const inputToSubtitle = replace(/\.[^.]*$/, '.en.srt');
-
 export type HandbrakeConvertOptions = {
   input: string;
   outputFilename: string | number;
@@ -50,31 +48,12 @@ export class HandbrakeService {
       callback?.(text);
     };
 
-    const subtitleFile = inputToSubtitle(input);
-    const subtitleExists = await this.fileExists(subtitleFile);
-
-    this.logger.debug('subtitle exists:', subtitleFile, subtitleExists);
-
     this.logger.debug('output', output);
 
-    const audioArgs = ['--audio-lang-list', 'eng'];
-    const subtitleArgs = subtitleExists
-      ? ['--srt-file', subtitleFile, '--srt-burn']
-      : ['--subtitle-lang-list', 'eng', '--subtitle-burned'];
-    const restArgs = this.config.handbrakeArgs.split(' ');
+    const args = await this.getArgs({ input, output });
 
     return new Promise<string>((resolve, reject) => {
-      const child = execFile(this.config.handbrakePath, [
-        '-i',
-        input,
-        '-o',
-        output,
-        '--preset',
-        this.config.preset,
-        ...restArgs,
-        ...audioArgs,
-        ...subtitleArgs,
-      ]);
+      const child = execFile(this.config.handbrakePath, args);
 
       child.stdout.setEncoding('utf8');
       child.stdout.on('data', log);
@@ -132,5 +111,32 @@ export class HandbrakeService {
         resolve(!err);
       }),
     );
+  }
+
+  private async getArgs({ input, output }: { input: string; output: string }) {
+    const { handbrakeArgs, preset } = this.config;
+    const inputToSubtitle = replace(/\.[^.]*$/, '.en.srt');
+    const subtitleFile = inputToSubtitle(input);
+    const subtitleExists = await this.fileExists(subtitleFile);
+
+    this.logger.debug('subtitle exists:', subtitleFile, subtitleExists);
+
+    const audioArgs = ['--audio-lang-list', 'eng'];
+    const subtitleArgs = subtitleExists
+      ? ['--srt-file', subtitleFile, '--srt-burn']
+      : ['--subtitle-lang-list', 'eng', '--subtitle-burned'];
+    const restArgs = handbrakeArgs.split(' ');
+
+    return [
+      '-i',
+      input,
+      '-o',
+      output,
+      '--preset',
+      preset,
+      ...restArgs,
+      ...audioArgs,
+      ...subtitleArgs,
+    ];
   }
 }
