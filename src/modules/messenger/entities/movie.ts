@@ -33,13 +33,14 @@ export class Movie {
   }
 
   get caption() {
+    const { overview, genres, youTubeTrailerId, credits } = this.movie;
+
     return [
       this.title,
-      this.movie.overview,
-      `🎬<a href="https://youtube.com/watch?v=${this.movie.youTubeTrailerId}">Trailer</a>`,
-      [this.movie.genres.map(toTag).join(' '), toTag('Movie')].join('\n'),
-      `👥` +
-        this.movie.credits.map(compose(toTag, prop('personName'))).join(' '),
+      overview,
+      `🎬<a href="https://youtube.com/watch?v=${youTubeTrailerId}">Trailer</a>`,
+      [genres.map(toTag).join(' '), Movie.IdentityTag].join('\n'),
+      `👥` + credits.map(compose(toTag, prop('personName'))).join(' '),
     ].join('\n\n');
   }
 

@@ -61,9 +61,4 @@ export class MessengerController {
 
     return { queue };
   }
-
-  @Get('published/movies')
-  async getPublishedMovies() {
-    return this.messengerMovieService.getPublishedMovies();
-  }
 }

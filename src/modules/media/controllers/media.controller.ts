@@ -2,17 +2,29 @@ import { Controller, Get, Param } from '@nestjs/common';
 import { MEDIA_MODULE_ID } from '../media.constants';
 import { RadarrService } from '../../radarr';
 import { SonarrService } from '../../sonarr';
+import { MediaService } from '../services';
 
 @Controller(MEDIA_MODULE_ID)
 export class MediaController {
   constructor(
     private readonly radarrService: RadarrService,
     private readonly sonarrService: SonarrService,
+    private readonly mediaService: MediaService,
   ) {}
 
   @Get('movies')
   listMovies() {
     return this.radarrService.list();
+  }
+
+  @Get('movies/published')
+  async listPublishedMovies() {
+    return this.mediaService.getPublishedMovies();
+  }
+
+  @Get('shows/published')
+  async listPublishedShows() {
+    return this.mediaService.getPublishedShows();
   }
 
   @Get('shows')
