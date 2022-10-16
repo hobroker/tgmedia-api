@@ -73,8 +73,9 @@ export class MessengerShowService {
     this.logger.debug('finding main message in the channel:', show.rawTitle);
 
     return this.telegramHelperService.upsertChannelMessage(
-      { search: show.searchString },
+      { search: show.rawTitle },
       { caption: show.caption, file: show.image },
+      { includes: [Show.IdentityTag] },
     );
   }
 }

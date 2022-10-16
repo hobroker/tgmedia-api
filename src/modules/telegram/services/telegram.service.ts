@@ -6,7 +6,6 @@ import {
   IterMessagesParams,
   SendMessageParams,
 } from 'telegram/client/messages';
-import { head } from 'ramda';
 import { telegramConfig } from '../telegram.config';
 import { TelegramAuthService } from './telegram-auth.service';
 
@@ -21,19 +20,26 @@ export class TelegramService {
     this.client = telegramAuthService.client;
   }
 
-  findChannelMessage({
-    search,
-  }: Pick<IterMessagesParams, 'search'>): Promise<Api.Message | null> {
-    return this.findChannelMessages({ search }).then<Api.Message>(head);
-  }
+  findChannelMessageByTitle(
+    { search }: Pick<IterMessagesParams, 'search'>,
+    { includes }: { includes: string[] } = { includes: [] },
+  ): Promise<Api.Message | null> {
+    const _includes = [`${search}\n\n`, ...includes];
 
-  findChannelMessages({
-    search,
-  }: Pick<IterMessagesParams, 'search'>): Promise<Api.Message[]> {
-    return this.client.getMessages(this.config.chatId, {
+    return this.findChannelMessages({
       search,
       filter: new Api.InputMessagesFilterPhotos(),
-    });
+    }).then((messages) =>
+      messages.find(({ message }) =>
+        _includes.every((include) => message.includes(include)),
+      ),
+    );
+  }
+
+  findChannelMessages(
+    args: Pick<IterMessagesParams, 'search' | 'filter'>,
+  ): Promise<Api.Message[]> {
+    return this.client.getMessages(this.config.chatId, args);
   }
 
   async commentVideoToChannel({
