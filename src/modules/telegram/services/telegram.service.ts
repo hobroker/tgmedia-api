@@ -28,7 +28,6 @@ export class TelegramService {
 
     return this.findChannelMessages({
       search,
-      filter: new Api.InputMessagesFilterPhotos(),
     }).then((messages) =>
       messages.find(({ message }) =>
         _includes.every((include) => message.includes(include)),
@@ -37,9 +36,12 @@ export class TelegramService {
   }
 
   findChannelMessages(
-    args: Pick<IterMessagesParams, 'search' | 'filter'>,
+    args: Pick<IterMessagesParams, 'search'>,
   ): Promise<Api.Message[]> {
-    return this.client.getMessages(this.config.chatId, args);
+    return this.client.getMessages(this.config.chatId, {
+      ...args,
+      filter: new Api.InputMessagesFilterPhotos(),
+    });
   }
 
   getChannelMessageComments(
