@@ -63,7 +63,7 @@ class ShowModal {
                   ${Object.entries(episodes)
                     .map(([episodeNumber, episode]) => {
                       const isPublished =
-                        published[seasonNumber][episodeNumber];
+                        published[seasonNumber]?.[episodeNumber];
                       const disabled = !episode.hasFile || isPublished;
 
                       return `

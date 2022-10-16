@@ -1,4 +1,5 @@
 import { Controller, Get, Param } from '@nestjs/common';
+import { always } from 'ramda';
 import { MEDIA_MODULE_ID } from '../media.constants';
 import { RadarrService } from '../../radarr';
 import { SonarrService } from '../../sonarr';
@@ -29,7 +30,7 @@ export class MediaController {
 
   @Get('shows/published/:showId')
   async listPublishedShowEpisodes(@Param() { showId }: { showId: number }) {
-    return this.mediaService.getPublishedShowEpisodes(showId);
+    return this.mediaService.getPublishedShowEpisodes(showId).catch(always({}));
   }
 
   @Get('shows')
