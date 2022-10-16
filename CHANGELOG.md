@@ -1,3 +1,10 @@
+# [2.6.0](https://github.com/hobroker/tgmedia-api/compare/v2.5.0...v2.6.0) (2022-10-16)
+
+
+### Features
+
+* show published episodes in UI ([#17](https://github.com/hobroker/tgmedia-api/issues/17)) ([f166bf5](https://github.com/hobroker/tgmedia-api/commit/f166bf5e92622dd02770e37e0ebc8eded58e859e))
+
 # [2.5.0](https://github.com/hobroker/tgmedia-api/compare/v2.4.0...v2.5.0) (2022-10-16)
 
 
