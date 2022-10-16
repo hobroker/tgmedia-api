@@ -1,6 +1,6 @@
 class API {
   async getMovies() {
-    const publishedMovies = await fetch('/v1/messenger/published/movies').then(
+    const published = await fetch('/v1/media/movies/published').then(
       (response) => response.json(),
     );
 
@@ -8,10 +8,10 @@ class API {
       .then((response) => response.json())
       .then((response) =>
         response
-          .map(({ images, ...movie }) => ({
-            ...movie,
-            size: toHumanSize(movie?.movieFile?.size),
-            isPublished: publishedMovies.includes(movie.title),
+          .map(({ images, ...rest }) => ({
+            ...rest,
+            size: toHumanSize(rest?.movieFile?.size),
+            isPublished: published.includes(rest.title),
             poster: images.find(({ coverType }) => coverType === 'poster')
               ?.remoteUrl,
           }))
@@ -29,13 +29,18 @@ class API {
     );
   }
 
-  getShows() {
+  async getShows() {
+    const published = await fetch('/v1/media/shows/published').then(
+      (response) => response.json(),
+    );
+
     return fetch('/v1/media/shows')
       .then((response) => response.json())
       .then((response) =>
         response
-          .map(({ images, ...movie }) => ({
-            ...movie,
+          .map(({ images, ...rest }) => ({
+            ...rest,
+            isPublished: published.includes(rest.title),
             poster: images.find(({ coverType }) => coverType === 'poster')
               ?.remoteUrl,
           }))
@@ -45,6 +50,12 @@ class API {
 
   getShowSeasons(showId) {
     return fetch(`/v1/media/show/${showId}/seasons`).then((response) =>
+      response.json(),
+    );
+  }
+
+  getShowPublishedEpisodes(showId) {
+    return fetch(`/v1/media/shows/published/${showId}`).then((response) =>
       response.json(),
     );
   }

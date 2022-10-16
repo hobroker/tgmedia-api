@@ -6,7 +6,6 @@ import {
   IterMessagesParams,
   SendMessageParams,
 } from 'telegram/client/messages';
-import { head } from 'ramda';
 import { telegramConfig } from '../telegram.config';
 import { TelegramAuthService } from './telegram-auth.service';
 
@@ -21,19 +20,34 @@ export class TelegramService {
     this.client = telegramAuthService.client;
   }
 
-  findChannelMessage({
-    search,
-  }: Pick<IterMessagesParams, 'search'>): Promise<Api.Message | null> {
-    return this.findChannelMessages({ search }).then<Api.Message>(head);
+  findChannelMessageByTitle(
+    { search }: Pick<IterMessagesParams, 'search'>,
+    { includes }: { includes: string[] } = { includes: [] },
+  ): Promise<Api.Message | null> {
+    const _includes = [`${search}\n\n`, ...includes];
+
+    return this.findChannelMessages({
+      search,
+    }).then((messages) =>
+      messages.find(({ message }) =>
+        _includes.every((include) => message.includes(include)),
+      ),
+    );
   }
 
-  findChannelMessages({
-    search,
-  }: Pick<IterMessagesParams, 'search'>): Promise<Api.Message[]> {
+  findChannelMessages(
+    args: Pick<IterMessagesParams, 'search'>,
+  ): Promise<Api.Message[]> {
     return this.client.getMessages(this.config.chatId, {
-      search,
+      ...args,
       filter: new Api.InputMessagesFilterPhotos(),
     });
+  }
+
+  getChannelMessageComments(
+    args: Pick<IterMessagesParams, 'replyTo'>,
+  ): Promise<Api.Message[]> {
+    return this.client.getMessages(this.config.chatId, args);
   }
 
   async commentVideoToChannel({

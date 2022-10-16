@@ -27,6 +27,11 @@ export class MediaController {
     return this.mediaService.getPublishedShows();
   }
 
+  @Get('shows/published/:showId')
+  async listPublishedShowEpisodes(@Param() { showId }: { showId: number }) {
+    return this.mediaService.getPublishedShowEpisodes(showId);
+  }
+
   @Get('shows')
   listShows() {
     return this.sonarrService.list();
@@ -37,13 +42,13 @@ export class MediaController {
     return this.radarrService.get(movieId);
   }
 
-  @Get('show/:seriesId')
-  async getShow(@Param() { seriesId }: { seriesId: number }) {
-    return this.sonarrService.get(seriesId);
+  @Get('show/:showId')
+  async getShow(@Param() { showId }: { showId: number }) {
+    return this.sonarrService.get(showId);
   }
 
-  @Get('show/:seriesId/seasons')
-  async getShowSeasons(@Param() { seriesId }: { seriesId: number }) {
-    return this.sonarrService.getShowSeasons(seriesId);
+  @Get('show/:showId/seasons')
+  async getShowSeasons(@Param() { showId }: { showId: number }) {
+    return this.sonarrService.getShowSeasons(showId);
   }
 }

@@ -13,6 +13,7 @@ class ShowModal {
 
         button.addEventListener('click', () => {
           button.disabled = true;
+          button.classList.add('is-loading');
 
           return this.api
             .sendEpisode({
@@ -22,13 +23,17 @@ class ShowModal {
             })
             .catch(() => {
               button.disabled = false;
+              button.classList.remove('is-loading');
             });
         });
       });
   }
 
   async open(showId) {
-    const seasons = await this.api.getShowSeasons(showId);
+    const [seasons, published] = await Promise.all([
+      this.api.getShowSeasons(showId),
+      this.api.getShowPublishedEpisodes(showId),
+    ]);
 
     this.modalContent.innerHTML = `
       <div class="mb-4 flex is-justify-content-right">
@@ -45,11 +50,11 @@ class ShowModal {
             );
 
             return `
-              <div class="column is-one-quarter-desktop is-one-third-tablet">
+              <div class="column is-one-third-desktop is-half-tablet">
                 <h5 class="title is-5 flex mb-2">
                   Season ${seasonNumber}
                   <button class="button is-small is-primary ml-auto"
-                          ${disabled ? 'disabled' : ''}
+                          ${disabled ? 'disabled' : 'disabled'}
                   >
                     Send full season
                   </button>
@@ -57,7 +62,9 @@ class ShowModal {
                 <table class="table is-compact is-bordered is-striped is-narrow is-hoverable is-fullwidth">
                   ${Object.entries(episodes)
                     .map(([episodeNumber, episode]) => {
-                      const disabled = !episode.hasFile;
+                      const isPublished =
+                        published[seasonNumber][episodeNumber];
+                      const disabled = !episode.hasFile || isPublished;
 
                       return `
                           <tr>
@@ -73,7 +80,7 @@ class ShowModal {
                                       data-season-number="${seasonNumber}"
                                       ${disabled ? 'disabled' : ''}
                               >
-                                Send
+                                ${isPublished ? 'Published' : 'Send'}
                               </button>
                             </td>
                           </tr>

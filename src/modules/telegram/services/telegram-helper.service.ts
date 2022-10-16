@@ -31,8 +31,12 @@ export class TelegramHelperService {
   async upsertChannelMessage(
     { search }: Pick<IterMessagesParams, 'search'>,
     { caption, file }: Pick<SendFileInterface, 'caption' | 'file'>,
+    { includes }: { includes?: string[] } = {},
   ) {
-    const message = await this.telegramService.findChannelMessage({ search });
+    const message = await this.telegramService.findChannelMessageByTitle(
+      { search },
+      { includes },
+    );
 
     if (message) {
       return message;
