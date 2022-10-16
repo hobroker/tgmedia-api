@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import {
   applySpec,
   compose,
+  filter,
   head,
   map,
   match,
@@ -9,6 +10,7 @@ import {
   prop,
   reduce,
   uniq,
+  when,
 } from 'ramda';
 import { TelegramService } from '../../telegram';
 import { Movie, Show } from '../../messenger';
@@ -30,12 +32,16 @@ const extractSeasonEpisodesMap = compose(
     }),
     {},
   ),
+  filter(Boolean),
   map(
     compose(
-      applySpec({
-        seasonNumber: compose(Number, nth(1)),
-        episodeNumber: compose(Number, nth(2)),
-      }),
+      when(
+        Array.isArray,
+        applySpec({
+          seasonNumber: compose(Number, nth(1)),
+          episodeNumber: compose(Number, nth(2)),
+        }),
+      ),
       match(/S([0-9]+)E([0-9]+)/),
       prop('message'),
     ),
