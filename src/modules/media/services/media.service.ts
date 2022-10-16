@@ -70,6 +70,13 @@ export class MediaService {
         { search: show.rawTitle },
         { includes: [Show.IdentityTag] },
       )
+      .then((message) => {
+        if (!message) {
+          throw new Error('Show not found');
+        }
+
+        return message;
+      })
       .then(({ id }) =>
         this.telegramService.getChannelMessageComments({ replyTo: id }),
       )
