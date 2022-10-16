@@ -1,3 +1,10 @@
+## [2.6.1](https://github.com/hobroker/tgmedia-api/compare/v2.6.0...v2.6.1) (2022-10-16)
+
+
+### Bug Fixes
+
+* undefined published episode ([#18](https://github.com/hobroker/tgmedia-api/issues/18)) ([ae61b71](https://github.com/hobroker/tgmedia-api/commit/ae61b715323438e06bdbd2410d6e38c2ec26a914))
+
 # [2.6.0](https://github.com/hobroker/tgmedia-api/compare/v2.5.0...v2.6.0) (2022-10-16)
 
 
