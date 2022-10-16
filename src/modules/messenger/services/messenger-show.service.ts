@@ -3,8 +3,9 @@ import { ConfigType } from '@nestjs/config';
 import { TelegramHelperService, TelegramService } from '../../telegram';
 import { messengerConfig } from '../messenger.config';
 import { Episode, Show } from '../entities';
-import { IEpisode, IShow } from '../../sonarr/interfaces';
+import { IShow } from '../../sonarr/interfaces';
 import { HandbrakeService } from '../../handbrake';
+import { SonarrService } from '../../sonarr';
 
 @Injectable()
 export class MessengerShowService {
@@ -16,23 +17,38 @@ export class MessengerShowService {
     private readonly telegramService: TelegramService,
     private readonly telegramHelperService: TelegramHelperService,
     private readonly handbrakeService: HandbrakeService,
+    private readonly sonarrService: SonarrService,
   ) {}
 
-  async sendMainMessageToTelegram(rawShow: IShow) {
+  async sendMainMessage(rawShow: IShow) {
     const { overrideMediaPath } = this.config;
     const show = new Show(rawShow, { overrideMediaPath });
 
     await this.upsertChannelMessage(show);
   }
 
-  async sendEpisodeToTelegram(rawShow: IShow, rawEpisode: IEpisode) {
+  async sendEpisode({
+    showId,
+    seasonNumber,
+    episodeNumber,
+  }: {
+    showId: number;
+    seasonNumber: number;
+    episodeNumber: number;
+  }) {
+    const [rawShow, seasons] = await Promise.all([
+      this.sonarrService.get(showId),
+      this.sonarrService.getShowSeasons(showId),
+    ]);
     const { overrideMediaPath } = this.config;
     const show = new Show(rawShow, { overrideMediaPath });
+    const rawEpisode = seasons[seasonNumber][episodeNumber];
+
     const episode = new Episode(rawEpisode, show, { overrideMediaPath });
 
     const message = await this.upsertChannelMessage(show);
 
-    this.logger.debug('converting video:', episode.rawTitle);
+    this.logger.debug('encoding video:', episode.rawTitle);
     const file = await this.telegramHelperService.sendConvertVideoProgress(
       { commentTo: message.id },
       {
@@ -41,7 +57,7 @@ export class MessengerShowService {
       },
     );
 
-    this.logger.debug('converting video done:', episode.rawTitle);
+    this.logger.debug('encoding video done:', episode.rawTitle);
 
     this.logger.debug('sending video:', episode.rawTitle);
     await this.telegramHelperService.sendVideo({
@@ -54,7 +70,7 @@ export class MessengerShowService {
   }
 
   private upsertChannelMessage(show: Show) {
-    this.logger.debug('finding main message in the channel:', show.toString());
+    this.logger.debug('finding main message in the channel:', show.rawTitle);
 
     return this.telegramHelperService.upsertChannelMessage(
       { search: show.searchString },

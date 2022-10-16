@@ -5,7 +5,11 @@ import { RadarrModule } from '../radarr';
 import { SonarrModule } from '../sonarr';
 import { HandbrakeModule } from '../handbrake';
 import { messengerConfig } from './messenger.config';
-import { MessengerMovieService, MessengerShowService } from './services';
+import {
+  MessengerMovieService,
+  MessengerQueueService,
+  MessengerShowService,
+} from './services';
 import { MessengerController } from './controllers';
 
 @Module({
@@ -16,7 +20,11 @@ import { MessengerController } from './controllers';
     SonarrModule,
     HandbrakeModule,
   ],
-  providers: [MessengerMovieService, MessengerShowService],
+  providers: [
+    MessengerMovieService,
+    MessengerShowService,
+    MessengerQueueService,
+  ],
   controllers: [MessengerController],
 })
 export class MessengerModule {}

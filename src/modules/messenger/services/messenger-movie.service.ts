@@ -1,10 +1,9 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
-import { compose, head, match, prop } from 'ramda';
 import { TelegramHelperService, TelegramService } from '../../telegram';
 import { messengerConfig } from '../messenger.config';
 import { Movie } from '../entities';
-import { IMovie } from '../../radarr';
+import { RadarrService } from '../../radarr';
 
 @Injectable()
 export class MessengerMovieService {
@@ -13,43 +12,37 @@ export class MessengerMovieService {
   constructor(
     @Inject(messengerConfig.KEY)
     private config: ConfigType<typeof messengerConfig>,
+    private readonly radarrService: RadarrService,
     private readonly telegramService: TelegramService,
     private readonly telegramHelperService: TelegramHelperService,
   ) {}
 
-  async sendToTelegram(rawMovie: IMovie) {
+  async send({ movieId }: { movieId: number }) {
+    const rawMovie = await this.radarrService.get(movieId);
     const movie = new Movie(rawMovie, {
       overrideMediaPath: this.config.overrideMediaPath,
     });
 
-    this.logger.debug('sending main message to the channel:', movie.toString());
+    this.logger.debug('sending main message to the channel:', movie.rawTitle);
     const message = await this.telegramService.sendPhotoToChannel({
       caption: movie.caption,
       file: movie.image,
     });
 
-    this.logger.debug('converting video:', movie.toString());
+    this.logger.debug('encoding video:', movie.rawTitle);
     const file = await this.telegramHelperService.sendConvertVideoProgress(
       { commentTo: message.id },
       { input: movie.video, outputFilename: movie.id },
     );
 
-    this.logger.debug('converting video done:', movie.toString());
+    this.logger.debug('encoding video done:', movie.rawTitle);
 
-    this.logger.debug('sending video:', movie.toString());
+    this.logger.debug('sending video:', movie.rawTitle);
     await this.telegramHelperService.sendVideo({
       file,
       commentTo: message.id,
-      caption: movie.caption,
+      caption: movie.title,
     });
-    this.logger.debug('sending video done:', movie.toString());
-  }
-
-  async getPublishedMovies() {
-    const messages = await this.telegramService.findChannelMessages({
-      search: '#Movie',
-    });
-
-    return messages.map(compose(head, match(/^(.*)$/m), prop('message')));
+    this.logger.debug('sending video done:', movie.rawTitle);
   }
 }

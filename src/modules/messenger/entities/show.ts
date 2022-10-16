@@ -15,7 +15,7 @@ export class Show {
     this.overrideMediaPath = overrideMediaPath;
   }
 
-  toString() {
+  get rawTitle() {
     return this.show.title;
   }
 
@@ -37,10 +37,14 @@ export class Show {
   }
 
   get caption() {
+    const { overview, genres } = this.show;
+
     return [
       this.title,
-      this.show.overview,
-      [this.show.genres.map(toTag).join(' '), toTag('TVSeries')].join('\n'),
+      overview,
+      [genres.map(toTag).join(' '), Show.IdentityTag].join('\n'),
     ].join('\n\n');
   }
+
+  static IdentityTag = '#TVSeries';
 }

@@ -39,39 +39,51 @@ class ShowModal {
       <hr />
       <div class="columns is-multiline">
         ${Object.entries(seasons)
-          .map(
-            ([seasonNumber, episodes]) => `
-            <div class="column is-one-quarter-desktop is-one-third-tablet">
-              <h5 class="title is-5 flex mb-2">
-                Season ${seasonNumber}
-                <button class="button is-small is-primary ml-auto">
-                  Send full season
-                </button>
-              </h5>
-              <table class="table is-compact is-bordered is-striped is-narrow is-hoverable is-fullwidth">
-                ${Object.entries(episodes)
-                  .map(
-                    ([episodeNumber, episode]) => `
-                      <tr>
-                        <td class="has-text-centered w-24">
-                          <code class="tag is-black w-24">${episodeNumber}</code>
-                        </td>
-                        <td>
-                          <p class="content is-small">${episode.title}</p>
-                        </td>
-                        <td class="has-text-right w-60">
-                          <button class="button is-small is-primary" data-episode-number="${episodeNumber}" data-season-number="${seasonNumber}">
-                            Send
-                          </button>
-                        </td>
-                      </tr>
-                    `,
-                  )
-                  .join('')}
-              </table>
-            </div>
-          `,
-          )
+          .map(([seasonNumber, episodes]) => {
+            const disabled = Object.values(episodes).some(
+              ({ hasFile }) => !hasFile,
+            );
+
+            return `
+              <div class="column is-one-quarter-desktop is-one-third-tablet">
+                <h5 class="title is-5 flex mb-2">
+                  Season ${seasonNumber}
+                  <button class="button is-small is-primary ml-auto"
+                          ${disabled ? 'disabled' : ''}
+                  >
+                    Send full season
+                  </button>
+                </h5>
+                <table class="table is-compact is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+                  ${Object.entries(episodes)
+                    .map(([episodeNumber, episode]) => {
+                      const disabled = !episode.hasFile;
+
+                      return `
+                          <tr>
+                            <td class="has-text-centered w-24">
+                              <code class="tag is-black w-24">${episodeNumber}</code>
+                            </td>
+                            <td>
+                              <p class="content is-small">${episode.title}</p>
+                            </td>
+                            <td class="has-text-right w-60">
+                              <button class="button is-small is-primary"
+                                      data-episode-number="${episodeNumber}"
+                                      data-season-number="${seasonNumber}"
+                                      ${disabled ? 'disabled' : ''}
+                              >
+                                Send
+                              </button>
+                            </td>
+                          </tr>
+                        `;
+                    })
+                    .join('')}
+                </table>
+              </div>
+            `;
+          })
           .join('')}
       </div>
     `;

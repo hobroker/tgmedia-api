@@ -1,6 +1,10 @@
 import { Controller, Get, Logger, Param } from '@nestjs/common';
-import { MessengerMovieService, MessengerShowService } from '../services';
-import { MESSENGER_MODULE_ID } from '../messenger.constants';
+import {
+  MessengerMovieService,
+  MessengerQueueService,
+  MessengerShowService,
+} from '../services';
+import { MESSENGER_MODULE_ID, QueueType } from '../messenger.constants';
 import { RadarrService } from '../../radarr';
 import { SonarrService } from '../../sonarr';
 
@@ -13,25 +17,25 @@ export class MessengerController {
     private readonly sonarrService: SonarrService,
     private readonly messengerMovieService: MessengerMovieService,
     private readonly messengerShowService: MessengerShowService,
+    private readonly messengerQueueService: MessengerQueueService,
   ) {}
 
   @Get('movie/:movieId')
   async uploadMovie(@Param() { movieId }: { movieId: number }) {
-    const movie = await this.radarrService.get(movieId);
+    const queue = this.messengerQueueService.add({
+      type: QueueType.Movie,
+      args: { movieId },
+    });
 
-    this.messengerMovieService
-      .sendToTelegram(movie)
-      .catch(this.logger.error.bind(this.logger));
-
-    return movie;
+    return { queue };
   }
 
   @Get('show/:showId')
   async uploadShow(@Param() { showId }: { showId: number }) {
     const show = await this.sonarrService.get(showId);
 
-    this.messengerShowService
-      .sendMainMessageToTelegram(show)
+    await this.messengerShowService
+      .sendMainMessage(show)
       .catch(this.logger.error.bind(this.logger));
 
     return show;
@@ -50,20 +54,11 @@ export class MessengerController {
       episodeNumber: number;
     },
   ) {
-    const [show, seasons] = await Promise.all([
-      this.sonarrService.get(showId),
-      this.sonarrService.getShowSeasons(showId),
-    ]);
+    const queue = this.messengerQueueService.add({
+      type: QueueType.Episode,
+      args: { showId, episodeNumber, seasonNumber },
+    });
 
-    const episode = seasons[seasonNumber][episodeNumber];
-
-    await this.messengerShowService.sendEpisodeToTelegram(show, episode);
-
-    return episode;
-  }
-
-  @Get('published/movies')
-  async getPublishedMovies() {
-    return this.messengerMovieService.getPublishedMovies();
+    return { queue };
   }
 }

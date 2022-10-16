@@ -3,7 +3,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
-import { replace } from 'ramda';
+import { compose, find, includes, replace, split, when } from 'ramda';
 import { handbrakeConfig } from '../handbrake.config';
 
 export type HandbrakeConvertOptions = {
@@ -11,6 +11,13 @@ export type HandbrakeConvertOptions = {
   outputFilename: string | number;
   ext?: '.mp4';
 };
+
+const extractProgress = compose(
+  when<string | undefined, string>(Boolean, replace('\r', '')),
+  find<string>(includes('Encoding')),
+  split('\n'),
+  String,
+);
 
 @Injectable()
 export class HandbrakeService {
@@ -42,10 +49,11 @@ export class HandbrakeService {
     }
 
     const log = (data) => {
-      const text = data.split('\n').find((item) => item.includes('Encoding'));
+      const text = extractProgress(data);
 
-      if (!data.includes(text)) return;
-      callback?.(text);
+      if (!text || !callback) return;
+
+      callback(text);
     };
 
     this.logger.debug('output', output);
