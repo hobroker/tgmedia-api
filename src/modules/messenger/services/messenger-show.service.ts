@@ -48,7 +48,7 @@ export class MessengerShowService {
 
     const message = await this.upsertChannelMessage(show);
 
-    this.logger.debug('converting video:', episode.rawTitle);
+    this.logger.debug('encoding video:', episode.rawTitle);
     const file = await this.telegramHelperService.sendConvertVideoProgress(
       { commentTo: message.id },
       {
@@ -57,7 +57,7 @@ export class MessengerShowService {
       },
     );
 
-    this.logger.debug('converting video done:', episode.rawTitle);
+    this.logger.debug('encoding video done:', episode.rawTitle);
 
     this.logger.debug('sending video:', episode.rawTitle);
     await this.telegramHelperService.sendVideo({

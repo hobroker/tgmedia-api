@@ -1,6 +1,5 @@
 import { EventEmitter } from 'events';
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import { tail } from 'ramda';
 import { QueueType } from '../messenger.constants';
 import { MessengerMovieService } from './messenger-movie.service';
 import { MessengerShowService } from './messenger-show.service';
@@ -22,7 +21,7 @@ export class MessengerQueueService implements OnModuleInit {
 
   add({ type, args }: QueueItem): number {
     this.logger.log('ADD to queue', type, args);
-    this.queue.push({ type, args });
+    this.queue = [...this.queue, { type, args }];
 
     if (!this.isWorking) {
       this.next();
@@ -42,7 +41,7 @@ export class MessengerQueueService implements OnModuleInit {
 
     const [{ type, args }] = this.queue;
 
-    this.queue.shift();
+    this.queue = this.queue.slice(1);
 
     this.emitter.emit(type, args);
   }

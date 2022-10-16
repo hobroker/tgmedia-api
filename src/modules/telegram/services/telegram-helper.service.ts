@@ -53,10 +53,11 @@ export class TelegramHelperService {
         message: `uploading ${caption}...`,
       });
 
+    const throttledLog = throttle(this.logger.debug.bind(this.logger));
     const progressCallback = (progress: number) => {
       const text = `uploading ${caption}... ${progress}%`;
 
-      this.logger.debug(text);
+      throttledLog(text);
 
       return updateMessage(text);
     };
@@ -81,8 +82,9 @@ export class TelegramHelperService {
         commentTo,
         message: 'encoding the video...',
       });
+    const throttledLog = throttle(this.logger.debug.bind(this.logger));
     const progressCallback = (progress: string) => {
-      this.logger.debug(progress);
+      throttledLog(progress);
 
       return updateMessage(progress);
     };
