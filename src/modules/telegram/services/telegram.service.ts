@@ -42,6 +42,12 @@ export class TelegramService {
     return this.client.getMessages(this.config.chatId, args);
   }
 
+  getChannelMessageComments(
+    args: Pick<IterMessagesParams, 'replyTo'>,
+  ): Promise<Api.Message[]> {
+    return this.client.getMessages(this.config.chatId, args);
+  }
+
   async commentVideoToChannel({
     file,
     caption,

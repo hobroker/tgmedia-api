@@ -24,10 +24,11 @@ class Table {
 
       button.addEventListener('click', () => {
         button.disabled = true;
-        button.innerText = 'Sending...';
+        button.classList.add('is-loading');
 
         return this.api.sendMovie(id).catch(() => {
           button.disabled = false;
+          button.classList.remove('is-loading');
         });
       });
     });
@@ -85,7 +86,7 @@ class Table {
     const shows = await this.api.getShows();
 
     this.tbody.innerHTML = shows
-      .map(({ title, overview, poster, id }) => {
+      .map(({ title, overview, poster, id, isPublished }) => {
         return `<tr>
             <td class="w-100">
               <img src="${poster}" alt="${title}" class="image w-100" />
@@ -100,6 +101,11 @@ class Table {
               <button class="button is-primary is-small" data-id="${id}">
                 Open show
               </button>
+              ${
+                isPublished
+                  ? '<span class="tag is-black">Is Published</span>'
+                  : ''
+              }
             </td>
           </tr>`;
       })
