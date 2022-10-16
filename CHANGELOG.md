@@ -1,3 +1,10 @@
+# [2.5.0](https://github.com/hobroker/tgmedia-api/compare/v2.4.0...v2.5.0) (2022-10-16)
+
+
+### Features
+
+* add queue ([#16](https://github.com/hobroker/tgmedia-api/issues/16)) ([6dcd912](https://github.com/hobroker/tgmedia-api/commit/6dcd912b70c49f1238cdc9a93f5ab782bb34fc6c))
+
 # [2.4.0](https://github.com/hobroker/tgmedia-api/compare/v2.3.0...v2.4.0) (2022-10-15)
 
 
