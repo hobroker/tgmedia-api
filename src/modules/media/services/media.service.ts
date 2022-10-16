@@ -10,7 +10,6 @@ import {
   prop,
   reduce,
   uniq,
-  when,
 } from 'ramda';
 import { TelegramService } from '../../telegram';
 import { Movie, Show } from '../../messenger';
@@ -32,20 +31,14 @@ const extractSeasonEpisodesMap = compose(
     }),
     {},
   ),
-  filter(Boolean),
   map(
-    compose(
-      when(
-        Array.isArray,
-        applySpec({
-          seasonNumber: compose(Number, nth(1)),
-          episodeNumber: compose(Number, nth(2)),
-        }),
-      ),
-      match(/S([0-9]+)E([0-9]+)/),
-      prop('message'),
-    ),
+    applySpec({
+      seasonNumber: compose(Number, nth(1)),
+      episodeNumber: compose(Number, nth(2)),
+    }),
   ),
+  filter(prop('length')),
+  map(compose(match(/S([0-9]+)E([0-9]+)/), prop('message'))),
 );
 
 @Injectable()
