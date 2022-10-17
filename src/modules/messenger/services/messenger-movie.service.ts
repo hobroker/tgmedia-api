@@ -1,8 +1,8 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
-import { TelegramHelperService, TelegramService } from '../../telegram';
+import { TelegramHelperService } from '../../telegram';
 import { messengerConfig } from '../messenger.config';
-import { Movie } from '../entities';
+import { Movie, Show } from '../entities';
 import { RadarrService } from '../../radarr';
 
 @Injectable()
@@ -13,7 +13,6 @@ export class MessengerMovieService {
     @Inject(messengerConfig.KEY)
     private config: ConfigType<typeof messengerConfig>,
     private readonly radarrService: RadarrService,
-    private readonly telegramService: TelegramService,
     private readonly telegramHelperService: TelegramHelperService,
   ) {}
 
@@ -24,10 +23,7 @@ export class MessengerMovieService {
     });
 
     this.logger.debug('sending main message to the channel:', movie.rawTitle);
-    const message = await this.telegramService.sendPhotoToChannel({
-      caption: movie.caption,
-      file: movie.image,
-    });
+    const message = await this.upsertChannelMessage(movie);
 
     this.logger.debug('encoding video:', movie.rawTitle);
     const file = await this.telegramHelperService.sendConvertVideoProgress(
@@ -44,5 +40,15 @@ export class MessengerMovieService {
       caption: movie.title,
     });
     this.logger.debug('sending video done:', movie.rawTitle);
+  }
+
+  private upsertChannelMessage(movie: Movie) {
+    this.logger.debug('finding main message in the channel:', movie.rawTitle);
+
+    return this.telegramHelperService.upsertChannelMessage(
+      { search: movie.rawTitle },
+      { caption: movie.caption, file: movie.image },
+      { includes: [Show.IdentityTag] },
+    );
   }
 }
