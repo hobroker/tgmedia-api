@@ -1,3 +1,10 @@
+## [2.6.2](https://github.com/hobroker/tgmedia-api/compare/v2.6.1...v2.6.2) (2022-10-18)
+
+
+### Bug Fixes
+
+* prevent multiple movie main messages ([#19](https://github.com/hobroker/tgmedia-api/issues/19)) ([6cac93b](https://github.com/hobroker/tgmedia-api/commit/6cac93bbe94db97777e17e032284ca87fef7756e))
+
 ## [2.6.1](https://github.com/hobroker/tgmedia-api/compare/v2.6.0...v2.6.1) (2022-10-16)
 
 
