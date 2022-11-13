@@ -122,7 +122,7 @@ export class HandbrakeService {
   }
 
   private async getArgs({ input, output }: { input: string; output: string }) {
-    const { handbrakeArgs, preset } = this.config;
+    const { handbrakeArgs } = this.config;
     const inputToSubtitle = replace(/\.[^.]*$/, '.en.srt');
     const subtitleFile = inputToSubtitle(input);
     const subtitleExists = await this.fileExists(subtitleFile);
@@ -133,18 +133,16 @@ export class HandbrakeService {
     const subtitleArgs = subtitleExists
       ? ['--srt-file', subtitleFile, '--srt-burn']
       : ['--subtitle-lang-list', 'eng', '--subtitle-burned'];
-    const restArgs = handbrakeArgs.split(' ');
+    const restArgs = handbrakeArgs.match(/(?:[^\s"]+|"[^"]*")+/g);
 
     return [
       '-i',
       input,
       '-o',
       output,
-      '--preset',
-      preset,
       ...restArgs,
       ...audioArgs,
       ...subtitleArgs,
-    ];
+    ].map(replace(/(^"|"$)/g, ''));
   }
 }
