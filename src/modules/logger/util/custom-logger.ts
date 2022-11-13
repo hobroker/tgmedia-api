@@ -39,7 +39,7 @@ export class CustomLogger {
 
       let withTime = this.withTime;
 
-      if (options.ms !== undefined) {
+      if (options?.ms !== undefined) {
         ms = options.ms;
         withTime = true;
       } else {
