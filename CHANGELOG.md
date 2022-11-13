@@ -1,3 +1,10 @@
+# [2.7.0](https://github.com/hobroker/tgmedia-api/compare/v2.6.2...v2.7.0) (2022-11-13)
+
+
+### Features
+
+* allow any handbrake args ([#20](https://github.com/hobroker/tgmedia-api/issues/20)) ([a2544e8](https://github.com/hobroker/tgmedia-api/commit/a2544e89c4c1948525e7cbe71b7df96ac1c19cb5))
+
 ## [2.6.2](https://github.com/hobroker/tgmedia-api/compare/v2.6.1...v2.6.2) (2022-10-18)
 
 
