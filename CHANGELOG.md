@@ -1,3 +1,10 @@
+## [2.7.1](https://github.com/hobroker/tgmedia-api/compare/v2.7.0...v2.7.1) (2022-11-24)
+
+
+### Bug Fixes
+
+* undefined ms in logger options ([#21](https://github.com/hobroker/tgmedia-api/issues/21)) ([4d9842e](https://github.com/hobroker/tgmedia-api/commit/4d9842e73ec80408b70ef9366072aa02deb26a8e))
+
 # [2.7.0](https://github.com/hobroker/tgmedia-api/compare/v2.6.2...v2.7.0) (2022-11-13)
 
 
